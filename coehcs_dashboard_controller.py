@@ -155,7 +155,7 @@ def get_init_data_set(df, dfs={}):
                      'reporting_country_dated': rep_df_dated,
                      'reporting_district': rep_df_district,
                      'reporting_district_dated': rep_df_district_dated,
-                     'facility':facility}
+                     'facility': facility}
     return init_data_set
 
 ###
@@ -252,8 +252,9 @@ def scatter_country_overview_transform(data):
         data_out, 'year', [2018, 2019, 2020], 'month', month_order)
     return data_out
 
-
 # Data Card 2
+
+
 def map_country_overview_transform(data):
     print('Getting data for the data card 2')
 
@@ -277,7 +278,6 @@ def map_country_overview_transform(data):
     data_in = data_in.reset_index()
     data_in = data_in.groupby(by=['id', 'year', 'month']).sum().reset_index()
     data_in = data_in.pivot_table(columns='year', values=val_col, index='id')
-
 
     data_in[val_col] = (data_in[last_date.year] -
                         data_in[first_date.year]) / data_in[first_date.year] * 100
@@ -326,6 +326,8 @@ def tree_map_district_transform(data):
     return data_out
 
 # Data card 4.1
+
+
 def facility_evolution_scatter(data):
     data = data.get('facility')
 
@@ -387,4 +389,44 @@ def bar_facilities_district_transform(data):
     print('Getting data for data card 7')
     data_in = data.get('reporting_district')
     data_out = reporting_count_transform(data_in.copy())
+    return data_out
+
+
+# Data card 8
+def bar_ranked_country_transform(data):
+    print('Getting data for data card 8 - rank')
+    print()
+    data_in = data.get('country_dated')
+    # Get the first date and the last one of the df
+    # df ordered according to reference (at top) and target date (at end)
+    first_date = data_in.date.iloc[0].to_pydatetime()
+    last_date = data_in.date.iloc[-1].to_pydatetime()
+
+    # Seperate dataframe by dates
+    # month_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May',
+    #                'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+    mask = ((data_in.year == first_date.year) & (data_in.month == month_order[first_date.month - 1])) \
+        | ((data_in.year == last_date.year) & (data_in.month == month_order[last_date.month-1]))
+
+    data_in = data_in[mask]
+    data_in = check_index(data_in)
+    val_col = data_in.columns[0]
+    data_in = data_in[[val_col]]
+    data_in = data_in.reset_index()
+    data_in = data_in.groupby(by=['id', 'year', 'month']).sum().reset_index()
+    data_in = data_in.pivot_table(columns='year', values=val_col, index='id')
+
+    data_in[val_col] = (data_in[last_date.year] -
+                        data_in[first_date.year]) / data_in[first_date.year]
+    data_in[val_col] = data_in[val_col].apply(lambda x: round(x, 2))
+
+    data_in = data_in[[val_col]].reset_index()
+    data_in['id'] = data_in['id'].astype(str)
+    data_in = data_in.set_index('id')
+    data_in = data_in[~pd.isna(data_in[val_col])]
+    data_in['rank'] = data_in.rank(ascending=True)
+    data_in = data_in[data_in['rank'] < 11].sort_values(by='rank')
+    data_in.drop('rank', axis=1, inplace=True)
+    data_out = {'Top/Bottom 10': data_in}
     return data_out

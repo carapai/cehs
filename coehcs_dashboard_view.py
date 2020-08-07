@@ -25,7 +25,9 @@ from coehcs_dashboard_controller import (bar_facilities_country_transform,
                                          reporting_map_transform,
                                          scatter_country_overview_transform,
                                          scatter_district_overview_transform,
-                                         tree_map_district_transform)
+                                         tree_map_district_transform,
+                                         bar_ranked_country_transform
+                                         )
 from coehcs_dashboard_model import (CardLayout, DatePicker, DatePickerGroup,
                                     SideNav)
 from package.components import NestedDropdownGroup
@@ -34,8 +36,7 @@ from package.layout.chart_card import ChartDataCard
 from package.layout.data_story import DataStory
 from package.layout.map_card import MapDataCard
 
-# Data
-
+# data
 
 # Get set of credentials
 
@@ -54,7 +55,6 @@ shapefile = gpd.read_file('./data/shapefiles/shapefile.shp')
 
 DATABASE_URI = os.environ['HEROKU_POSTGRESQL_CYAN_URL']
 engine = create_engine(DATABASE_URI)
-
 
 columns = {x.get('new'): x.get('old') for x in pd.read_sql(
     'SELECT new, old FROM columns_index;', con=engine).to_dict('records')}
@@ -164,12 +164,28 @@ country_overview_scatter.set_colors({'fig': {2018: 'rgb(185, 221, 241)',
 
 
 country_overview_map = MapDataCard(
-    fig_title='Percentage change in number of $label$ between target and reference date',
     data=init_data_set,
     data_transform=map_country_overview_transform,
     geodata=shapefile,
     locations='id',
     map_tolerance=0.005)
+
+# Bar chart 3
+
+bar_chart_ranks_bottom = ChartDataCard(
+    data=init_data_set,
+    data_transform=bar_ranked_country_transform,
+    fig_object='Bar',
+    bar_mode='overlay'
+)
+
+country_overview = CardLayout(
+    title='Percentage change in number of children under one receiving their $label$ between target and reference date',
+    elements=[
+        country_overview_map,
+        bar_chart_ranks_bottom
+    ]
+)
 
 
 # Scatter district 3
@@ -222,7 +238,7 @@ stacked_bar_reporting_country.set_colors(
 # Reporting map 6
 
 
-reporting_map = MapDataCard(fig_title='Percentage of reporting facilities that reported on $label$',
+reporting_map = MapDataCard(
                             data=init_data_set,
                             data_transform=reporting_map_transform,
                             geodata=shapefile,
@@ -245,7 +261,7 @@ stacked_bar_district.set_colors(
 
 ds = DataStory(data_cards=[
     country_overview_scatter,
-    country_overview_map,
+    country_overview,
     district_overview_scatter,
     tree_map_district,
     facility_scatter,
@@ -260,10 +276,10 @@ ds = DataStory(data_cards=[
 
 app = ds.app
 
-# auth = dash_auth.BasicAuth(
-#     app,
-#     credentials
-# )
+auth = dash_auth.BasicAuth(
+    app,
+    credentials
+)
 
 callback_ids = {outlier_policy_dropdown_group.dropdown_ids[-1]: 'value',
                 indicator_dropdown_group.dropdown_ids[-1]: 'value',
@@ -350,11 +366,16 @@ def update_on_click_or_hover(*inputs):
     try:
         label = inp.get('points')[0].get('label')
     except Exception:
-        label = data_out.facility_name[0]
+        facility_max_value = data_out.groupby(
+            ['facility_name']).count().reset_index()
+        facility_max_value = facility_max_value.sort_values(
+            facility_max_value.columns[-1], ascending=False, ignore_index=True)
+        label = facility_max_value.facility_name[0]
     data_out = data_out[data_out.facility_name == label].reset_index(drop=True)
     init_data_set['facility'] = data_out
     facility_scatter.data = init_data_set
-    facility_scatter.figure = facility_scatter._get_figure(facility_scatter.data)
+    facility_scatter.figure = facility_scatter._get_figure(
+        facility_scatter.data)
     facility_scatter.figure_title = f'Evolution of $label$ in {label} (click on the graph above to filter)'
     return [facility_scatter.figure, facility_scatter.figure_title]
 
@@ -391,7 +412,6 @@ def change_titles(*inputs):
 
     country_overview_scatter.title = f'Overview: Across the country, the number of {indicator} changed by {perc_first}% between {reference_month}-{reference_year} and {target_month}-{target_year}'
 
-
     try:
 
         dis_data = district_overview_scatter.data
@@ -405,7 +425,6 @@ def change_titles(*inputs):
         dist_perc = '?'
 
     district_overview_scatter.title = f'Deep-dive in {district} district: The number of {indicator} changed by {dist_perc}% between {reference_month}-{reference_year} and {target_month}-{target_year}'
-
 
     try:
         data_reporting = stacked_bar_reporting_country.data
@@ -460,4 +479,4 @@ def toggle_fade(n, is_in):
 
 # comment out on development
 if __name__ == '__main__':
-    ds.run(dev=True, host='0.0.0.0')
+    ds.run(dev=True, host='0.0.0.0', port=8080)

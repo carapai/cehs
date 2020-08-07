@@ -11,6 +11,7 @@ class ChartDataCard(DataCard):
 
         # Capitalizing is important here, because we are going to get the same object name from plotly
         self.fig_object = kwargs.get('fig_object', 'Scatter')
+        self.bar_mode = kwargs.get('bar_mode', 'stack')
 
     def _get_figure(self, data: {str: pd.DataFrame} = None):
         fig = go.Figure()
@@ -21,14 +22,22 @@ class ChartDataCard(DataCard):
             fig.add_trace(FigType(x=df.index,
                                   y=df[df.columns[0]],
                                   name=name,
-                                  marker_color=self.colors.get('fig').get(name)
+                                  marker_color=self.colors.get(
+                                      'fig').get(name)
                                   )
                           )
+            if self.bar_mode == 'overlay':
+                fig.update_traces(marker_color='rgb(211, 41, 61)', textposition='inside',
+                                  texttemplate='%{x:%}',
+                                  orientation='h',
+                                  y=df.index,
+                                  x=df[df.columns[0]],
+                                  showlegend=False)
 
         self.style_figure(fig)
 
         if self.fig_object == 'Bar':
-            fig.update_layout(barmode='stack')
+            fig.update_layout(barmode=self.bar_mode)
 
         return fig
 
