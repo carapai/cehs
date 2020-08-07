@@ -49,7 +49,6 @@ for x in os.environ:
         credentials[login] = password
 
 
-
 shapefile = gpd.read_file('./data/shapefiles/shapefile.shp')
 
 
@@ -404,9 +403,8 @@ def change_titles(*inputs):
         data = country_overview_scatter.data
         data_reference = data.get(reference_year)
         data_target = data.get(target_year)
-
         perc_first = round(
-            data_target.loc[target_month][0] / data_reference.loc[reference_month][0], 0) * 100
+            (data_target.loc[target_month][0] / data_reference.loc[reference_month][0])*100)
     except Exception:
         perc_first = '?'
 
@@ -419,8 +417,8 @@ def change_titles(*inputs):
         dis_data_reference = data.get(reference_year)
         dis_data_target = data.get(target_year)
 
-        dist_perc = round(dis_data_target.loc[target_month][0] /
-                          dis_data_reference.loc[reference_month][0], 0) * 100
+        dist_perc = round((dis_data_target.loc[target_month][0] /
+                          dis_data_reference.loc[reference_month][0])*100)
     except Exception:
         dist_perc = '?'
 
@@ -448,10 +446,10 @@ def change_titles(*inputs):
         except Exception:
             reported_negative = 0
 
-        reported_perc = round((reported_positive+reported_negative) /
-                              (reported_positive + did_not_report + reported_negative), 0) * 100
+        reported_perc = round(((reported_positive+reported_negative) /
+                              (reported_positive + did_not_report + reported_negative))*100)
         reported_positive = round(
-            reported_positive/(reported_positive+reported_negative), 0) * 100
+            (reported_positive/(reported_positive+reported_negative))*100)
     except Exception:
         reported_perc = '?'
         reported_positive = '?'
