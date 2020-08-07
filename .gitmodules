@@ -1,0 +1,6 @@
+[submodule "icohs-analysis"]
+	path = icohs-analysis
+	url = https://github.com/DalbergDataInsights/icohs-analysis.git
+[submodule "dhis2-api"]
+	path = dhis2-api
+	url = https://github.com/DalbergDataInsights/dhis2-api.git
