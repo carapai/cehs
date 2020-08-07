@@ -1,0 +1,88 @@
+@font-face{
+    font-family: 'Lato', sans-serif;
+    src: url("/static/Lato/Lato-Regular.ttf");
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+}
+
+body {
+    text-align: center;
+    min-width: 740px;
+    overflow: auto;
+    font-family: 'Lato', sans-serif;
+}
+
+#ds-wrapper {
+    max-width: 100em;
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
+}
+
+.data-card {
+    width: 100%;
+    overflow: visible;
+    margin: 0px 0px 50px 0px;
+}
+
+/* .data-card:nth-child(odd) {
+    background: #d9d6d6;
+}
+.data-card:nth-child(even) {
+    background: #ffffff;
+} */
+
+
+.data-card__header-container {
+    padding: 12px 0px 12px 0px;
+    margin: 12px 0 12px 0;
+    background: #d9d6d6;
+}
+
+.text-section {
+    margin: 0 auto;
+    padding: 12px 0 12px 0;
+}
+
+.m-top-24 {
+    margin-top: 24px;
+}
+
+.m-bot-24 {
+    margin-bottom: 24px;
+}
+
+.m-24 {
+    margin: 24px 0 24px 0;
+}
+
+.color-primary-dark {
+    color: #6d6e71;
+}
+
+.color-secondary-dark {
+    color: #898584;
+}
+
+.ds-header__logo {
+    height: auto !important;
+    width: 100% !important;
+    object-fit: scale-down;
+}
+
+.dropdown-section {
+    padding: 24px 0 24px 0;
+}
+
+.SingleDatePicker, .SingleDatePickerInput, .DateInput {
+    width: 100%;
+}
+
+.top {
+    z-index: 99 !important;
+}
