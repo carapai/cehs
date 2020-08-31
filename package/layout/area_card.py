@@ -39,9 +39,9 @@ class AreaDataCard(DataCard):
                     cmid=scale_max/3,
                     cmax=scale_max
                 ),
-                hovertemplate='<b>%{label} </b> <br> ' +
-                str(df.columns[0]) +
-                ' : %{value}<br> Percentage of total: %{color:.2f}',
+                # hovertemplate='<b>%{label} </b> <br> ' +
+                # str(df.columns[0]) +
+                # ' : %{value}<br> Percentage of total: %{color:.2f}',
                 textinfo='label+value+percent parent'
             ))
 

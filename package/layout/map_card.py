@@ -28,9 +28,8 @@ class MapDataCard(DataCard):
 
         # optional public members
         self.mapbox_style = 'carto-positron'
-        self.zoom = 5.75
+        self.zoom = 5.50
         self.opacity = 1
-
 
     # Content
 
@@ -50,17 +49,18 @@ class MapDataCard(DataCard):
 
         for name, df in data.items():
             choropleth_map = go.Choroplethmapbox(z=df[df.columns[0]],
-                                                geojson=self.__geojson,
-                                                locations=df.reset_index()[self.locations],
-                                                hovertemplate='%{location} <br>' +
-                                                df.columns[0] +
-                                                ': %{z}' + '<extra></extra>',
-                                                marker_opacity=self.opacity,
-                                                marker_line_width=1,
-                                                colorscale=figure_colors.get(name, next(iter(figure_colors.values()))),
-                                                zauto=True,
-                                                zmid=0)
-
+                                                 geojson=self.__geojson,
+                                                 locations=df.reset_index()[
+                self.locations],
+                hovertemplate='%{location} <br>' +
+                df.columns[0] +
+                ': %{z}' + '<extra></extra>',
+                marker_opacity=self.opacity,
+                marker_line_width=1,
+                colorscale=figure_colors.get(
+                                                     name, next(iter(figure_colors.values()))),
+                zauto=True,
+                zmid=0)
 
         fig = go.Figure(choropleth_map)
 

@@ -26,6 +26,7 @@ class Dashboard:
             self.app = Dash(external_stylesheets=external_stylesheets)
 
         app = self.app  # For referencing with the decorator (see line below)
+        app.title = 'CEHS Uganda'
 
         @app.server.route('/static/<asset_type>/<path>')
         def static_file(asset_type, path):
@@ -61,7 +62,6 @@ class Dashboard:
                 except AttributeError as e:
                     print(e)
 
-
     ###################
     #    CALLBACKS    #
     ###################
@@ -76,7 +76,7 @@ class Dashboard:
                         callback.get('input'),
                         callback.get('output'),
                         callback.get('func'))
-        for x in self.ind_elements: # FIXME
+        for x in self.ind_elements:  # FIXME
             if x._requires_dropdown():
                 for callback in x.callbacks:
                     self.register_callback(
@@ -84,12 +84,10 @@ class Dashboard:
                         callback.get('output'),
                         callback.get('func'))
 
-
-
     def register_callback(self,
-                        input_element_params,
-                        output_elements_params,
-                        function):
+                          input_element_params,
+                          output_elements_params,
+                          function):
         out_set, in_set = self.__define_callback_set(
             output_elements_params, input_element_params)
 
@@ -106,9 +104,9 @@ class Dashboard:
         return callback_wrapper
 
     def __define_callback_set(self,
-                            output_elements_id_prop: [(str, str)],
-                            input_element_id_prop: [(str, str)]
-                            ):
+                              output_elements_id_prop: [(str, str)],
+                              input_element_id_prop: [(str, str)]
+                              ):
 
         callback_set_outputs = [
             Output(component_id=component_id,

@@ -86,3 +86,8 @@ body {
 .top {
     z-index: 99 !important;
 }
+
+.contact{
+    display: flex;
+    justify-content: center;
+}

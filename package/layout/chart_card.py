@@ -23,7 +23,8 @@ class ChartDataCard(DataCard):
                                   y=df[df.columns[0]],
                                   name=name,
                                   marker_color=self.colors.get(
-                                      'fig').get(name)
+                                      'fig').get(name),
+                                  hoverinfo='x+y'
                                   )
                           )
             if self.bar_mode == 'overlay':
@@ -32,7 +33,8 @@ class ChartDataCard(DataCard):
                                   orientation='h',
                                   y=df.index,
                                   x=df[df.columns[0]],
-                                  showlegend=False)
+                                  showlegend=False,
+                                  hoverinfo='none')
 
         self.style_figure(fig)
 

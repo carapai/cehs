@@ -371,9 +371,9 @@ def reporting_map_transform(data):
         total_facilities = (districtal_df[val_col] != 'not_expected').sum()
         reported_facilities = len(
             districtal_df[districtal_df[val_col] == 'positive_indic'])
-        report_rate = round(reported_facilities / total_facilities, 2)
+        report_rate = round((reported_facilities / total_facilities)*100, 2)
         districts.append(district)
-        reporting.append(report_rate*100)
+        reporting.append(report_rate)
 
     reporting_df = pd.DataFrame({'id': districts, 'Reporting rate': reporting})
     reporting_df = reporting_df.set_index('id')

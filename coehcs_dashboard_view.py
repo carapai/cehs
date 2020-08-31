@@ -1,20 +1,22 @@
-from coehcs_dashboard_controller import facility_evolution_scatter
 import os
+from datetime import datetime
 
+import dash_auth
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-import dash_auth
 import geopandas as gpd
 import pandas as pd
-from datetime import datetime
 from dash.dependencies import Input, Output, State
+from dotenv import find_dotenv, load_dotenv
 from rich import print
 from sqlalchemy import create_engine
 
 from coehcs_dashboard_controller import (bar_facilities_country_transform,
                                          bar_facilities_district_transform,
+                                         bar_ranked_country_transform,
                                          check_index, check_index_dfs,
+                                         facility_evolution_scatter,
                                          filter_by_district,
                                          filter_df_by_dates,
                                          filter_df_by_indicator,
@@ -25,12 +27,11 @@ from coehcs_dashboard_controller import (bar_facilities_country_transform,
                                          reporting_map_transform,
                                          scatter_country_overview_transform,
                                          scatter_district_overview_transform,
-                                         tree_map_district_transform,
-                                         bar_ranked_country_transform
-                                         )
+                                         tree_map_district_transform)
 from coehcs_dashboard_model import (CardLayout, DatePicker, DatePickerGroup,
-                                    SideNav)
-from package.components import NestedDropdownGroup
+                                    SideNav, Methodology)
+from package.components.nested_dropdown_group import NestedDropdownGroup
+from package.components.methodology_section import MethodologySection
 from package.layout.area_card import AreaDataCard
 from package.layout.chart_card import ChartDataCard
 from package.layout.data_story import DataStory
@@ -39,6 +40,9 @@ from package.layout.map_card import MapDataCard
 # data
 
 # Get set of credentials
+
+
+load_dotenv(find_dotenv())
 
 credentials = {}
 
@@ -55,30 +59,59 @@ shapefile = gpd.read_file('./data/shapefiles/shapefile.shp')
 DATABASE_URI = os.environ['HEROKU_POSTGRESQL_CYAN_URL']
 engine = create_engine(DATABASE_URI)
 
-columns = {x.get('new'): x.get('old') for x in pd.read_sql(
-    'SELECT new, old FROM columns_index;', con=engine).to_dict('records')}
+# data paths: to be updated once we move to the hosting server
+columns_mapping_file = ""
+data_outliers_file = ""
+data_reporting_file = ""
+data_std_file = ""
+data_iqr_file = ""
+indicator_group_file = ""
 
-data_reporting = pd.read_sql('''SELECT reporting.*, facilities_index.facility_name
-                                FROM reporting
+
+def read_data(engine):
+    try:
+        columns = {x.get('new'): x.get('old') for x in pd.read_sql(
+            'SELECT new, old FROM columns_index;', con=engine).to_dict('records')}
+
+        data_reporting = pd.read_sql('''SELECT reporting.*, facilities_index.facility_name
+                                        FROM reporting
+                                        JOIN facilities_index
+                                        ON reporting.facility_id = facilities_index.facility_id''', con=engine)
+
+        data_outliers = pd.read_sql('''SELECT with_outliers.*, facilities_index.facility_name
+                                    FROM with_outliers
+                                    JOIN facilities_index
+                                    ON with_outliers.facility_id = facilities_index.facility_id''', con=engine)
+
+        data_std = pd.read_sql('''SELECT no_outliers_std.*, facilities_index.facility_name
+                                FROM no_outliers_std
                                 JOIN facilities_index
-                                ON reporting.facility_id = facilities_index.facility_id''', con=engine)
+                                ON no_outliers_std.facility_id = facilities_index.facility_id''',
+                               con=engine)
 
-data_outliers = pd.read_sql('''SELECT with_outliers.*, facilities_index.facility_name
-                               FROM with_outliers
-                               JOIN facilities_index
-                               ON with_outliers.facility_id = facilities_index.facility_id''', con=engine)
+        data_iqr = pd.read_sql('''SELECT no_outliers_iqr.*, facilities_index.facility_name
+                                FROM no_outliers_iqr
+                                JOIN facilities_index
+                                ON no_outliers_iqr.facility_id = facilities_index.facility_id''',
+                               con=engine)
+        indicator_group = pd.read_sql(
+            'SELECT * FROM indicator_groups', con=engine)
 
-data_std = pd.read_sql('''SELECT no_outliers_std.*, facilities_index.facility_name
-                          FROM no_outliers_std
-                          JOIN facilities_index
-                          ON no_outliers_std.facility_id = facilities_index.facility_id''',
-                       con=engine)
+    except Exception as e:
+        columns = {x.get('new'): x.get('old') for x in pd.read_csv(
+            columns_mapping_file).to_dict('records')}
+        data_reporting = pd.read_csv(data_reporting_file)
+        data_outliers = pd.read_csv(data_outliers_file)
+        data_std = pd.read_csv(data_std_file)
+        data_iqr = pd.read_csv(data_iqr_file)
+        indicator_group = pd.read_csv(indicator_group_file)
 
-data_iqr = pd.read_sql('''SELECT no_outliers_iqr.*, facilities_index.facility_name
-                          FROM no_outliers_iqr
-                          JOIN facilities_index
-                          ON no_outliers_iqr.facility_id = facilities_index.facility_id''',
-                       con=engine)
+    return columns, data_reporting, data_outliers, data_std, data_iqr, indicator_group
+
+
+columns, data_reporting, data_outliers, data_std, data_iqr, indicator_group = read_data(
+    engine)
+
 
 dfs = {
     'Correct outliers - using standard deviation': data_std,
@@ -86,8 +119,6 @@ dfs = {
     'Keep outliers': data_outliers,
     'Reporting': data_reporting,
 }
-
-indicator_group = pd.read_sql('SELECT * FROM indicator_groups', con=engine)
 
 for key, df in dfs.items():
     df['date'] = pd.to_datetime(df.date, errors='coerce')
@@ -139,6 +170,43 @@ district_control_group.dropdown_objects[0].value = 'KAMPALA'
 side_nav = SideNav([outlier_policy_dropdown_group, indicator_dropdown_group,
                     reference_date, target_date, district_control_group])
 
+meth_data = [
+    {
+        'sub_title': 'Choice of Inidcators',
+        'body': "We focus on a key set of indicators as advised experts and described WHO's list of priority indicators. For simplicity of interpretation and time comparison, we focus on absolute numbers rathr than calculated indicators. ",
+        'list_data': []
+    },
+    {
+        'sub_title': 'Outlier Exclusion',
+        'body': "We exclude outliers at facility level - for a given facility and indicator, we look at all data points available since January 2018 and replace all data points identified as outliers by the sample's median. We give two options for outlier exclusion: ",
+        'list_data': [
+            "A standard deviation-based approach, where all points more than three standard deviations away from the mean are considered outliers. This approach is best suited for 'cleaner', normally distributed data.",
+            "An interquartile range-based approach, using Tukey's fences method with k=3, which fits a broader range of data distributions but is also more stringent, and hence best suited for 'messier' data.",
+        ]
+    },
+    {
+        'sub_title': 'Reporting Rates ',
+        'body': "We provide two layers of information on reporting rate:",
+        'list_data': [
+            "A form-specific indicator - the percentage of facilities that reported on their 105:1 form out of those expected to report. This is similar to the reporting rates displayed on the DHIS2 system.",
+            "An indicator-specific indicator - the percentage of facilities that reported a posistive number for the selected indicator out of all facilities that have submitted their 105:1 form. This provides added information on how otherwise reporting facilities report on this specific indicator. "
+        ]
+    },
+    {
+        'sub_title': 'Notes',
+        'body': '',
+        'list_data': [
+            "For the purpose of this analysis, we have focused on a total 5716 facilities that were both registered in the old and new instance of DHIS2, leading to a loss of about 1% of datapoints.",
+            "In the last section of the dashboard, for clarity of visualizations, we only display districts where the total number of facilities that reported on their 105:1 form is larger or equal to the number of facilities that reported on a given indicator."
+        ]
+    }
+
+]
+
+
+methodology_layout = MethodologySection(title='Methodology', data=meth_data)
+methodology = Methodology([methodology_layout])
+
 
 global init_data_set
 init_data_set = get_init_data_set(dfs.get('Keep outliers'), dfs)
@@ -160,7 +228,6 @@ country_overview_scatter.set_colors({'fig': {2018: 'rgb(185, 221, 241)',
                                              2020: 'rgb(200, 19, 60)'}})
 
 # Country map 2
-
 
 country_overview_map = MapDataCard(
     data=init_data_set,
@@ -238,12 +305,12 @@ stacked_bar_reporting_country.set_colors(
 
 
 reporting_map = MapDataCard(
-                            data=init_data_set,
-                            data_transform=reporting_map_transform,
-                            geodata=shapefile,
-                            locations='id',
-                            map_tolerance=0.005
-                            )
+    data=init_data_set,
+    data_transform=reporting_map_transform,
+    geodata=shapefile,
+    locations='id',
+    map_tolerance=0.005
+)
 
 # Reporting 7
 
@@ -257,6 +324,7 @@ stacked_bar_district = ChartDataCard(data=init_data_set,
 stacked_bar_district.set_colors(
     {'fig': ['rgb(42, 87, 131)', 'rgb(247, 190, 178)', 'rgb(211, 41, 61)']})
 
+import dash_core_components as dcc
 
 ds = DataStory(data_cards=[
     country_overview_scatter,
@@ -268,12 +336,15 @@ ds = DataStory(data_cards=[
     reporting_map,
     stacked_bar_district
 ],
-    ind_elements=[side_nav],
+    ind_elements=[side_nav, methodology],
     footer_image='/static/images/UNICEF-MOH-bottom-resized.jpg',
     title='Continuity of Essential Health Services',
-    sub_title='Overview of country and district level health services for MOH Uganda')
+    sub_title='Overview of country, district and health facility-level health services in Uganda',
+    footer_text=dcc.Link(children='Dalberg Data Insights - Contact Us',
+                         href='mailto:ddi_support@dalberg.com'))
 
 app = ds.app
+app.title = 'CEHS Uganda'
 
 auth = dash_auth.BasicAuth(
     app,
@@ -418,7 +489,7 @@ def change_titles(*inputs):
         dis_data_target = data.get(target_year)
 
         dist_perc = round((dis_data_target.loc[target_month][0] /
-                          dis_data_reference.loc[reference_month][0])*100)
+                           dis_data_reference.loc[reference_month][0])*100)
     except Exception:
         dist_perc = '?'
 
@@ -447,7 +518,7 @@ def change_titles(*inputs):
             reported_negative = 0
 
         reported_perc = round(((reported_positive+reported_negative) /
-                              (reported_positive + did_not_report + reported_negative))*100)
+                               (reported_positive + did_not_report + reported_negative))*100)
         reported_positive = round(
             (reported_positive/(reported_positive+reported_negative))*100)
     except Exception:
@@ -456,7 +527,7 @@ def change_titles(*inputs):
 
     stacked_bar_reporting_country.title = f'Reporting: On {target_month}-{target_year}, around {reported_perc}% of facilities reported on their 105:1 form, and, out of those, {reported_positive}% reported for this {indicator}',
 
-    tree_map_district.title = f"The contribution of individual facilities in {district} district to the total number of {indicator} on {target_month}-{target_year}"
+    tree_map_district.title = f"Contribution of individual facilities in {district} district to the total number of {indicator} on {target_month}-{target_year}"
 
     return [country_overview_scatter.title, district_overview_scatter.title, stacked_bar_reporting_country.title, tree_map_district.title]
 
@@ -469,10 +540,24 @@ def change_titles(*inputs):
 def toggle_fade(n, is_in):
     if not n:
         # Button has never been clicked
-        is_in = False
+        is_in = True
     out = not is_in
-    button_title = 'Hide controls' if out else 'Show controls'
+    button_title = 'Controls'
     return [out, button_title]
+
+
+@app.callback(
+    [Output("fade2", "is_in"), Output('fade-button2', 'children')],
+    [Input("fade-button2", "n_clicks")],
+    [State("fade2", "is_in")],
+)
+def toggle_fade(n, is_in):
+    if not n:
+        # Button has never been clicked
+        is_in = True
+    out2 = not is_in
+    button_title2 = 'Info'
+    return [out2, button_title2]
 
 
 # comment out on development

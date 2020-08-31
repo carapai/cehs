@@ -19,11 +19,11 @@ class SideNav:
         el_layout = [dbc.Row(x.layout) for x in self.elements]
 
         layout = html.Div([
-            dbc.Button("Hide controls", id="fade-button", className="mb-3"),
+            dbc.Button("Show controls", id="fade-button", className="mb-3"),
             dbc.Fade(
                 el_layout,
                 id="fade",
-                is_in=True,
+                is_in=False,
                 style={'transition': 'opacity 100ms ease',
                        'background': 'white',
                        #    'padding': '12px 12px 12px 12px',
@@ -33,7 +33,7 @@ class SideNav:
                        'overflow': 'visible'},
                 className='top shadow-sm p-3 mb-5 rounded'
             )
-        ], style={'position': 'fixed', 'left': '20px', 'top': '20px'}, className='top')
+        ], style={'position':'fixed', 'left': '20px', 'top': '20px'}, className='top')
         return layout
 
     def _requires_dropdown(self):
@@ -185,3 +185,56 @@ class CardLayout:
             out = None
             print(e)
             print('All dynamic strings should have closing $ sign')
+
+
+# class NoObservation:
+#     """
+#         To be called when no data was recorded for a certain reference or target date
+#         Renders: No Observation layout
+#     """
+
+#     @property
+#     def layout(self):
+#         return dbc.Col(dbc.Row([dbc.Col([
+#             html.Div(
+#                 html.H5(html.B('No data has been recorded for this Reference Date or Target Date',
+#                                style={'color': '#000000',
+#                                       'text-align': 'center',
+#                                       'width': '100%'
+#                                       }
+#                                )
+#                         )
+#                 )
+#             ])]))
+
+
+class Methodology:
+
+    def __init__(self, elements):
+
+        self.elements = elements
+        self.callbacks = []
+
+    @property
+    def layout(self):
+        el_layout = [dbc.Row(x.layout) for x in self.elements]
+
+        layout = html.Div([
+            dbc.Button("Show Info", id="fade-button2", className="mb-3", style={'position':'fixed', 'right': '20px', 'top': '20px'}),
+            dbc.Fade(
+                el_layout,
+                id="fade2",
+                is_in=False,
+                style={'transition': 'opacity 100ms ease',
+                       'background': 'white',
+                       'height': 'auto',
+                       'width': '30vw',
+                       'overflow': 'visible',
+                       'position':'fixed', 'right': '20px', 'top': '80px'},
+                className='top shadow-sm p-3 mb-5 rounded'
+            )
+        ], className='top')
+        return layout
+
+    def _requires_dropdown(self):
+        return False
