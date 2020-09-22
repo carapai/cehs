@@ -6,6 +6,7 @@ from flask import send_from_directory
 from package import here
 from package.layout.base.dashboard import Dashboard
 from package.layout.base.data_card import DataCard
+from helpers import timeit
 
 
 class DataStory(Dashboard):
@@ -29,6 +30,7 @@ class DataStory(Dashboard):
             self.__name = str(self).split('>')[0][-11:]
         return self.__name
 
+    @timeit
     def get_layout(self):
 
         layout = [self.__get_header()] + \
@@ -39,16 +41,21 @@ class DataStory(Dashboard):
 
         return layout
 
+    @timeit
+    def get_container(self):
+        return dbc.Container(self.get_layout(),
+                             id='ds-container')
+
     def _set_layout(self):
         layout = html.Div([
             html.Div([
                 html.Link(rel='stylesheet',
                           href='/static/css/data_story.css'),
                 html.Link(href="https://fonts.googleapis.com/css2?family=Lato&display=swap",
-                          rel="stylesheet")
+                          rel="stylesheet"),
+                dcc.Location(id='url', refresh=False)
             ]),
-            dbc.Container(self.get_layout(),
-                          id='ds-container')],
+            html.Div(self.get_container(), id='ds-paginator')],
             id='ds-wrapper')
 
         self.app.layout = layout
@@ -88,16 +95,16 @@ class DataStory(Dashboard):
     def __get_footer(self):
 
         footer_layout = [
-        dbc.Row(
-            dbc.Col(
-                html.Img(src=self.footer_image,
-                         style={'width': '100%'},
-                         className='ds-header__logo m-top-24')
-            ) if self.footer_image else None),
-        dbc.Row(
-            dbc.Col(
-                html.H6(self.footer_text,
-                    className='text-right m-12')
-                    ) if self.footer_text else None)]
+            dbc.Row(
+                dbc.Col(
+                    html.Img(src=self.footer_image,
+                             style={'width': '100%'},
+                             className='ds-header__logo m-top-24')
+                ) if self.footer_image else None),
+            dbc.Row(
+                dbc.Col(
+                    html.H6(self.footer_text,
+                            className='text-right m-12')
+                ) if self.footer_text else None)]
 
         return dbc.Row(dbc.Col(footer_layout))

@@ -107,6 +107,13 @@ rich = "*"
 sqlalchemy = "*"
 psycopg2-binary = "*"
 dash-auth = "*"
+python-dotenv = "*"
+xlsxwriter = "*"
+pep8 = "*"
+black = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
