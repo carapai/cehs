@@ -9,7 +9,7 @@ from helpers import (filter_df_by_policy,
                      timeit)
 
 
-@timeit
+# @timeit
 def map_reporting_dated_data(dfs, indicator, target_year, target_month, reference_year, reference_month):
 
     df_reporting = filter_df_by_policy(dfs, 'Reporting')
