@@ -5,7 +5,7 @@ from helpers import (filter_df_by_policy,
                      timeit)
 
 
-@timeit
+# @timeit
 def bar_reporting_country_data(dfs, indicator):
 
     df_reporting = filter_df_by_policy(dfs, 'Reporting')

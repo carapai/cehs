@@ -11,7 +11,7 @@ from helpers import (filter_df_by_policy,
                      timeit)
 
 
-@timeit
+# @timeit
 def scatter_country_data(dfs, static, outlier, indicator, indicator_type, **kwargs):
 
     df = filter_df_by_policy(dfs, outlier)

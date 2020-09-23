@@ -13,7 +13,7 @@ from helpers import (filter_df_by_policy,
                      timeit)
 
 
-@timeit
+# @timeit
 def tree_map_district_dated_data(static, dfs, outlier,
                                  indicator, district,
                                  target_year, target_month,
