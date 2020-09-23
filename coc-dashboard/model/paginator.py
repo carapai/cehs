@@ -26,7 +26,8 @@ class Paginator:
                             "Dashboard",
                             className="mb-3",
                             id="dashboard-button",
-                            style={"border": "3px solid red", "font-weight": "bold"}
+                            style={"border": "3px solid red",
+                                   "font-weight": "bold"}
                             if self.clicked == "Dashboard"
                             else {"border": "3px solid gray"},
                         )
@@ -36,21 +37,13 @@ class Paginator:
                             "Reporting",
                             className="mb-3",
                             id="reporting-button",
-                            style={"border": "3px solid red", "font-weight": "bold"}
+                            style={"border": "3px solid red",
+                                   "font-weight": "bold"}
                             if self.clicked == "Dashboard"
                             else {"border": "3px solid gray"},
                         )
-                    ),
-                    dbc.Col(
-                        dbc.Button(
-                            "Reporting",
-                            className="mb-3",
-                            id="reporting-button",
-                            style={"border": "3px solid red", "font-weight": "bold"}
-                            if self.clicked == "Dashboard"
-                            else {"border": "3px solid gray"},
-                        )
-                    ),
+                    )
+
                 ]
             )
         ]
