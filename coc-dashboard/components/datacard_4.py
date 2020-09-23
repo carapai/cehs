@@ -14,10 +14,10 @@ from helpers import (filter_df_by_policy,
 
 
 # @timeit
-def tree_map_district_dated_data(static, dfs, outlier,
+def tree_map_district_dated_data(dfs, static, outlier,
                                  indicator, district,
                                  target_year, target_month,
-                                 reference_year, reference_month):
+                                 reference_year, reference_month, **kwargs):
 
     df = filter_df_by_policy(dfs, outlier)
 
@@ -29,13 +29,14 @@ def tree_map_district_dated_data(static, dfs, outlier,
     df_district_dated = filter_df_by_dates(
         df, target_year, target_month, reference_year, reference_month)
 
-    df_district_dated = filter_by_district(df_district_dated, district)
+    df_district_dated = filter_by_district(
+        df_district_dated, district, **kwargs)
 
     return df_district_dated
 
 
-@timeit
-def scatter_facility_data(static, dfs, outlier,
+# @timeit
+def scatter_facility_data(dfs, static, outlier,
                           indicator, district, facility):
 
     df = filter_df_by_policy(dfs, outlier)
