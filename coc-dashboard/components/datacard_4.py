@@ -14,7 +14,7 @@ from helpers import (filter_df_by_policy,
 
 
 # @timeit
-def tree_map_district_dated_data(dfs, static, outlier,
+def tree_map_district_dated_data(dfs, static, *, outlier,
                                  indicator, district,
                                  target_year, target_month,
                                  reference_year, reference_month, **kwargs):
@@ -30,14 +30,14 @@ def tree_map_district_dated_data(dfs, static, outlier,
         df, target_year, target_month, reference_year, reference_month)
 
     df_district_dated = filter_by_district(
-        df_district_dated, district, **kwargs)
+        df_district_dated, district)
 
     return df_district_dated
 
 
 # @timeit
 def scatter_facility_data(dfs, static, outlier,
-                          indicator, district, facility):
+                          indicator, district, facility=None, **kwargs):
 
     df = filter_df_by_policy(dfs, outlier)
 
