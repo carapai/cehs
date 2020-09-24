@@ -69,7 +69,7 @@ def define_datasets(static, dfs, controls,
 
         for i in FUNC_DF.index:
             args = set(FUNC_DF.loc[i, range(0, 9)].unique())
-            if len(args).intersection(changed_keys) > 0:
+            if len(args.intersection(changed_keys)) > 0:
                 datasets[i] = FUNC_DF.loc[i, 'function'](
                     dfs, static, **controls)
 
