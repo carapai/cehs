@@ -136,7 +136,6 @@ CONTROLS = dict(
 
 init_data_set = define_datasets(static=static, dfs=dfs, controls=CONTROLS)
 
-print(init_data_set)
 
 # TESTING
 
@@ -152,18 +151,20 @@ CONTROLS_1 = dict(
 
 CONTROLS_2 = dict(
     outlier='Correct outliers - using standard deviation',
-    indicator='BCG',
-    indicator_type='Absolute',
+    indicator='DPT3',
+    indicator_type='Percentage',
     district='KAMPALA',
     target_year='2020',
     target_month='Jul',
     reference_year='2019',
     reference_month='Jul')
 
-init_data_set = define_datasets(static, dfs, controls=CONTROLS_1,
-                                last_controls=CONTROLS_2)
+init_data_set = define_datasets(
+    static, dfs, controls=CONTROLS_1, last_controls=CONTROLS, datasets=init_data_set)
 
-print(init_data_set)
+init_data_set = define_datasets(static, dfs, controls=CONTROLS_1,
+                                last_controls=CONTROLS_2, datasets=init_data_set)
+
 
 # ########################################
 # #              DATACARDS               #
