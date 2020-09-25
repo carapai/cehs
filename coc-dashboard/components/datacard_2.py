@@ -11,7 +11,7 @@ from helpers import (filter_df_by_policy,
 
 
 # @timeit
-def map_bar_country_dated_data(dfs, static, outlier, indicator, indicator_type,
+def map_bar_country_dated_data(dfs, static, *, outlier, indicator, indicator_type,
                                target_year, target_month, reference_year, reference_month, **kwargs):
 
     df = filter_df_by_policy(dfs, outlier)
