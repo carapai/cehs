@@ -348,9 +348,6 @@ def global_story_callback(*inputs):
 
     LAST_CONTROLS = CONTROLS.copy()
 
-    # for x in CONTROLS.keys():
-    #     LAST_CONTROLS[x] = CONTROLS[x]
-
     CONTROLS['outlier'] = outlier
     CONTROLS['indicator'] = indicator
     CONTROLS['indicator_type'] = indicator_type
