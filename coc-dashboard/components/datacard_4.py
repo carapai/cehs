@@ -36,8 +36,8 @@ def tree_map_district_dated_data(dfs, static, *, outlier,
 
 
 # @timeit
-def scatter_facility_data(dfs, static, outlier,
-                          indicator, district, facility=None, **kwargs):
+def scatter_facility_data(dfs, static, *, outlier,
+                          indicator, district, facility, **kwargs):
 
     df = filter_df_by_policy(dfs, outlier)
 
