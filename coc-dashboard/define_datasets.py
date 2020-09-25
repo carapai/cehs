@@ -30,7 +30,7 @@ FUNC_LIST = [scatter_country_data,
 FUNC_ARG_DICT = {}
 
 for f in FUNC_LIST:
-    args = ip.getfullargspec(f)[0]
+    args = ip.getfullargspec(f)[4]
     FUNC_ARG_DICT[f] = args
 
 
@@ -51,7 +51,6 @@ print(FUNC_DF)
 
 @ timeit
 def define_datasets(static, dfs, controls,
-                    facility=None,
                     last_controls={},
                     datasets={}):
 
@@ -68,9 +67,11 @@ def define_datasets(static, dfs, controls,
         changed_keys = set(changed.index)
 
         for i in FUNC_DF.index:
-            args = set(FUNC_DF.loc[i, range(0, 9)].unique())
+            args = set(FUNC_DF.loc[i, range(0, 7)].unique())
             if len(args.intersection(changed_keys)) > 0:
                 datasets[i] = FUNC_DF.loc[i, 'function'](
                     dfs, static, **controls)
+                func_name = str(FUNC_DF.loc[i, "function"]).split(" ")[1]
+                print(f'ran function {func_name}')
 
     return datasets
