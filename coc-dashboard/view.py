@@ -463,7 +463,7 @@ def change_titles(*inputs):
                              - data_reference.loc[reference_month][0])
                             / data_reference.loc[reference_month][0])
                            * 100)
-    except Exception:
+    except Exception as e:
         print(e)
         perc_first = "?"
 
@@ -473,17 +473,16 @@ def change_titles(*inputs):
 
         dis_data = district_overview_scatter.data
 
-        dis_data_reference = data.get(int(reference_year))
-        dis_data_target = data.get(int(target_year))
+        dis_data_reference = dis_data.get(int(reference_year))
+        dis_data_target = dis_data.get(int(target_year))
 
-        dist_perc = round(
-            (
-                dis_data_target.loc[target_month][0]
-                / dis_data_reference.loc[reference_month][0]
-            )
-            * 100
-        )
-    except Exception:
+        dist_perc = round(((dis_data_target.loc[target_month][0]
+                            - dis_data_reference.loc[reference_month][0])
+                           / dis_data_reference.loc[reference_month][0])
+                          * 100)
+
+    except Exception as e:
+        print(e)
         dist_perc = "?"
 
     district_overview_scatter.title = f"Deep-dive in {district} district: The number of {indicator} changed by {dist_perc}% between {reference_month}-{reference_year} and {target_month}-{target_year}"
@@ -492,7 +491,7 @@ def change_titles(*inputs):
         data_reporting = stacked_bar_reporting_country.data
 
         date_reporting = datetime(
-            target_year, month_order.index(target_month) + 1, 1)
+            int(target_year), month_order.index(target_month) + 1, 1)
 
         try:
             reported_positive = data_reporting.get("Reported a positive number").loc[
@@ -528,7 +527,7 @@ def change_titles(*inputs):
         reported_positive = "?"
 
     stacked_bar_reporting_country.title = (
-        f"Reporting: On {target_month}-{target_year}, around {reported_perc}% of facilities reported on their 105:1 form, and, out of those, {reported_positive}% reported for this {indicator}",
+        f"Reporting: On {target_month}-{target_year}, around {reported_perc}% of facilities reported on their 105:1 form, and, out of those, {reported_positive}% reported for number of {indicator}",
     )
 
     tree_map_district.title = f"Contribution of individual facilities in {district} district to the total number of {indicator} on {target_month}-{target_year}"
