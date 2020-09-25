@@ -99,6 +99,8 @@ for key, df in dfs.items():
     df = df.rename(columns=columns)
     dfs[key] = df
 
+if os.path.isfile('./coc-dashboard/assets/cehs.xlsx') == False:
+    download_file(dfs) # write to excel file for download
 
 # Get content from the methodology file
 
@@ -558,16 +560,3 @@ def toggle_fade(n, is_in):
     button_title2 = "Info"
     return [out2, button_title2]
 
-
-@app.callback(
-    [Output("download-excel", "href")],
-    [Input("download-excel", "n_clicks")],
-)
-def download_data(n_clicks):
-    if n_clicks:
-        print("Yes")
-        href_data = download_file(dfs)
-
-        return [href_data]
-    else:
-        return [None]

@@ -8,21 +8,11 @@ import io
 
 def download_file(dict_of_st):
 
-    xlsx_io = io.BytesIO()
-    writer = pd.ExcelWriter(xlsx_io, engine='xlsxwriter')
-
-    for df_name, df in dict_of_st.items():
-        if len(df_name) > 31:
-            df_name = df_name[:30]
-
-        df.to_excel(writer, sheet_name=df_name)
-    writer.save()
-    xlsx_io.seek(0)
-
-    media_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    data = base64.b64encode(xlsx_io.read()).decode("utf-8")
-    href_data_downloadable = f'data:{media_type};base64,{data}'
-    return href_data_downloadable
+    with pd.ExcelWriter('./coc-dashboard/assets/cehs.xlsx',engine='xlsxwriter') as writer:  
+        for df_name, df in dict_of_st.items():
+            if len(df_name) > 31:
+                df_name = df_name[:30]
+            df.to_excel(writer, sheet_name=df_name)
 
 # Methodology section
 

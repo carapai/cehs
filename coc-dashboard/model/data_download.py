@@ -16,8 +16,9 @@ class Datadownload:
 
         layout = html.Div([
 
-            html.A(dbc.Button('Download data', className='mb-3', id="download"),
-                   id="download-excel", href='', download="data.xlsx", style={'position': 'fixed', 'right': '140px', 'top': '20px'}),
+           
+            html.A(dbc.Button('Download data', className ='mb-3', id = "download"),
+                id = "download-excel", href=r"./coc-dashboard/assets/cehs.xlsx", download=r"cehs.xlsx", style={'position':'fixed', 'right': '140px', 'top': '20px'}),
 
 
         ], className='top')
