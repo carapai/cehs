@@ -1,5 +1,5 @@
-
 import pandas as pd
+import inspect as ip
 
 from helpers import timeit
 
@@ -12,54 +12,66 @@ from components.datacard_5 import bar_reporting_country_data
 from components.datacard_6 import map_reporting_dated_data
 from components.datacard_7 import scatter_reporting_district_data
 
+# Define which function corresposnds to which object
 
-@timeit
-def define_datasets(static, dfs, outlier,
-                    indicator, indicator_type,
-                    target_year, target_month, reference_year, reference_month,
-                    district, facility=None):
+# TODO find a smart way to iterate through imports rather than repeatthe list manually
 
-    # TODO Find a better way to reference the args in the functionsto to avoid repetitions
-    # Use a dict, psoobily add a parameters for whcih to updte
-    # Add the dataset as inputto updte
-    # TODO Make it more ressorce efficient by only updating what needs updating
-    # Make all of those if > only change if value has changed
-    # Need to keep the state of the value in an object
-    # This object can be (1)
+args = ip.getfullargspec(scatter_country_data)[0]
 
-    country = scatter_country_data(dfs, static, outlier,
-                                   indicator, indicator_type)
+FUNC_LIST = [scatter_country_data,
+             map_bar_country_dated_data,
+             scatter_district_data,
+             tree_map_district_dated_data,
+             scatter_facility_data,
+             bar_reporting_country_data,
+             map_reporting_dated_data,
+             scatter_reporting_district_data]
 
-    dated = map_bar_country_dated_data(dfs, static, outlier, indicator, indicator_type,
-                                       target_year, target_month, reference_year, reference_month)
+FUNC_ARG_DICT = {}
 
-    districts = scatter_district_data(dfs, static, outlier,
-                                      indicator, indicator_type,
-                                      district)
+for f in FUNC_LIST:
+    args = ip.getfullargspec(f)[4]
+    FUNC_ARG_DICT[f] = args
 
-    district_dated = tree_map_district_dated_data(static, dfs, outlier,
-                                                  indicator, district,
-                                                  target_year, target_month,
-                                                  reference_year, reference_month)
 
-    facility = scatter_facility_data(static, dfs, outlier,
-                                     indicator, district, facility)
+FUNC_DF = pd.DataFrame\
+    .from_dict(FUNC_ARG_DICT, orient='index')\
+    .reset_index()\
 
-    reporting = bar_reporting_country_data(dfs, indicator)
+FUNC_DF.index = ['country', 'dated',
+                 'district', 'district_dated',
+                 'facility', 'reporting_country',
+                 'reporting_dated', 'reporting_district']
 
-    reporting_dated = map_reporting_dated_data(
-        dfs, indicator, target_year, target_month, reference_year, reference_month)
+FUNC_DF.rename(columns={'index': 'function'}, inplace=True)
 
-    reporting_district = scatter_reporting_district_data(
-        dfs, indicator, district)
 
-    datasets = {'country': country,
-                'dated': dated,
-                'district': districts,
-                'district_dated': district_dated,
-                'facility': facility,
-                'reporting_country': reporting,
-                'reporting_dated': reporting_dated,
-                'reporting_district': reporting_district}
+print(FUNC_DF)
+
+
+@ timeit
+def define_datasets(static, dfs, controls,
+                    last_controls={},
+                    datasets={}):
+
+    if last_controls == {}:
+
+        for i in FUNC_DF.index:
+            datasets[i] = FUNC_DF.loc[i, 'function'](dfs, static, **controls)
+
+    else:
+
+        new = pd.DataFrame.from_dict(controls, orient='index')
+        last = pd.DataFrame.from_dict(last_controls, orient='index')
+        changed = new[(new != last).any(1)]
+        changed_keys = set(changed.index)
+
+        for i in FUNC_DF.index:
+            args = set(FUNC_DF.loc[i, range(0, 7)].unique())
+            if len(args.intersection(changed_keys)) > 0:
+                datasets[i] = FUNC_DF.loc[i, 'function'](
+                    dfs, static, **controls)
+                func_name = str(FUNC_DF.loc[i, "function"]).split(" ")[1]
+                print(f'ran function {func_name}')
 
     return datasets

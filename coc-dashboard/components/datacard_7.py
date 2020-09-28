@@ -6,8 +6,8 @@ from helpers import (filter_df_by_policy,
                      timeit)
 
 
-@timeit
-def scatter_reporting_district_data(dfs, indicator, district):
+# @timeit
+def scatter_reporting_district_data(dfs, static, *, indicator, district, **kwargs):
 
     df_reporting = filter_df_by_policy(dfs, 'Reporting')
 
