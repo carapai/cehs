@@ -17,12 +17,12 @@ for x in os.environ:
 
 # TODO Have those paths defined ina  better place than in teh code
 
-columns_mapping_file = './data/columns.csv'
-data_outliers_file = './data/outliers.csv'
-data_reporting_file = './data/reporting.csv'
-data_std_file = './data/std.csv'
-data_iqr_file = './data/iqr.csv'
-indicator_group_file = './data/groups.csv'
+columns_mapping_file = './coc-dashboard/data/columns.csv'
+data_outliers_file = './coc-dashboard/data/outliers.csv'
+data_reporting_file = './coc-dashboard/data/reporting.csv'
+data_std_file = './coc-dashboard/data/std.csv'
+data_iqr_file = './coc-dashboard/data/iqr.csv'
+indicator_group_file = './coc-dashboard/data/groups.csv'
 
 
 def read_data(engine, test=False):

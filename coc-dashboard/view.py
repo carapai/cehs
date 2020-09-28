@@ -45,7 +45,6 @@ for x in os.environ:
         password = os.environ.get(x, os.environ.get("SECRET"))
         credentials[login] = password
 
-
 shapefile = gpd.read_file("./coc-dashboard/data/shapefiles/shapefile.shp")
 
 DATABASE_URI = os.environ["HEROKU_POSTGRESQL_CYAN_URL"]
@@ -74,7 +73,7 @@ pop_tgt = pd.read_csv(
 
 
 columns, data_reporting, data_outliers, data_std, data_iqr, indicator_group = read_data(
-    engine, test=False
+    engine, test=True
 )
 
 
@@ -108,20 +107,19 @@ download_button = Datadownload()
 
 meth_date = date_df["Date"].iloc[-1]
 
-methodology_layout = MethodologySection(title="Methodology", data=meth_data(meth_date))
+methodology_layout = MethodologySection(
+    title="Methodology", data=meth_data(meth_date))
 methodology = Methodology([methodology_layout])
 
 
 # global init_data_set
 
-(
-    side_nav,
+(side_nav,
     outlier_policy_dropdown_group,
     indicator_dropdown_group,
     reference_date,
     target_date,
-    district_control_group,
-) = initiate_dropdowns(data_outliers, indicator_group)
+    district_control_group) = initiate_dropdowns(data_outliers, indicator_group)
 
 CONTROLS = dict(
     outlier=outlier_policy_dropdown_group.dropdown_objects[0].value,
@@ -132,9 +130,11 @@ CONTROLS = dict(
     target_month=target_date.dropdown_objects[1].value,
     reference_year=reference_date.dropdown_objects[0].value,
     reference_month=reference_date.dropdown_objects[1].value,
-)
+    facility=None)
 
-init_data_set = define_datasets(static=static, dfs=dfs, **CONTROLS)
+LAST_CONTROLS = {}
+
+init_data_set = define_datasets(static=static, dfs=dfs, controls=CONTROLS)
 
 
 ########################################
@@ -344,21 +344,23 @@ def global_story_callback(*inputs):
     indicator_type = inputs[7]
 
     global CONTROLS
+    global LAST_CONTROLS
 
-    CONTROLS = dict(
-        outlier=outlier,
-        indicator=indicator,
-        indicator_type=indicator_type,
-        district=district,
-        target_year=target_year,
-        target_month=target_month,
-        reference_year=reference_year,
-        reference_month=reference_month,
-    )
+    LAST_CONTROLS = CONTROLS.copy()
+
+    CONTROLS['outlier'] = outlier
+    CONTROLS['indicator'] = indicator
+    CONTROLS['indicator_type'] = indicator_type
+    CONTROLS['district'] = district
+    CONTROLS['target_year'] = target_year
+    CONTROLS['target_month'] = target_month
+    CONTROLS['reference_year'] = reference_year
+    CONTROLS['reference_month'] = reference_month
 
     global init_data_set
 
-    init_data_set = define_datasets(static=static, dfs=dfs, **CONTROLS)
+    init_data_set = define_datasets(static, dfs, controls=CONTROLS,
+                                    last_controls=LAST_CONTROLS, datasets=init_data_set)
 
     ds.switch_data_set(init_data_set)
 
@@ -374,8 +376,6 @@ def global_story_callback(*inputs):
 )
 def update_on_click(*inputs):
 
-    # TODO Have that update only teh facility parametr rather than fetchingit all from the controls
-
     inp = inputs[0]
 
     try:
@@ -384,12 +384,16 @@ def update_on_click(*inputs):
 
         global init_data_set
 
-        init_data_set = define_datasets(
-            static=static, dfs=dfs, **CONTROLS, facility=label
-        )
+        LAST_CONTROLS = CONTROLS.copy()
+
+        CONTROLS['facility'] = label
+
+        init_data_set = define_datasets(static, dfs, controls=CONTROLS,
+                                        last_controls=LAST_CONTROLS, datasets=init_data_set)
 
         facility_scatter.data = init_data_set
-        facility_scatter.figure = facility_scatter._get_figure(facility_scatter.data)
+        facility_scatter.figure = facility_scatter._get_figure(
+            facility_scatter.data)
         facility_scatter.figure_title = (
             f"Evolution of $label$ in {label} (click on the graph above to filter)"
         )
@@ -402,7 +406,8 @@ def update_on_click(*inputs):
 
 @app.callback(
     [Output("ds-paginator", "children"), Output("paginator", "children")],
-    [Input("dashboard-button", "n_clicks"), Input("reporting-button", "n_clicks")],
+    [Input("dashboard-button", "n_clicks"),
+     Input("reporting-button", "n_clicks")],
 )
 def change_page(*inputs):
     changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
@@ -431,7 +436,7 @@ def change_page(*inputs):
     [
         Output(f"{country_overview_scatter.my_name}_title", "children"),
         Output(f"{district_overview_scatter.my_name}_title", "children"),
-        Output(f"{stacked_bar_reporting_country.my_name}_title", "children"),
+        #Output(f"{stacked_bar_reporting_country.my_name}_title", "children"),
         Output(f"{tree_map_district.my_name}_title", "children"),
     ],
     [Input(x, y) for (x, y) in callback_ids.items()],
@@ -449,13 +454,14 @@ def change_titles(*inputs):
     try:
         # Data card 1
         data = country_overview_scatter.data
-        data_reference = data.get(reference_year)
-        data_target = data.get(target_year)
-        perc_first = round(
-            (data_target.loc[target_month][0] / data_reference.loc[reference_month][0])
-            * 100
-        )
-    except Exception:
+        data_reference = data.get(int(reference_year))
+        data_target = data.get(int(target_year))
+        perc_first = round(((data_target.loc[target_month][0]
+                             - data_reference.loc[reference_month][0])
+                            / data_reference.loc[reference_month][0])
+                           * 100)
+    except Exception as e:
+        print(e)
         perc_first = "?"
 
     country_overview_scatter.title = f"Overview: Across the country, the number of {indicator} changed by {perc_first}% between {reference_month}-{reference_year} and {target_month}-{target_year}"
@@ -464,17 +470,16 @@ def change_titles(*inputs):
 
         dis_data = district_overview_scatter.data
 
-        dis_data_reference = data.get(reference_year)
-        dis_data_target = data.get(target_year)
+        dis_data_reference = dis_data.get(int(reference_year))
+        dis_data_target = dis_data.get(int(target_year))
 
-        dist_perc = round(
-            (
-                dis_data_target.loc[target_month][0]
-                / dis_data_reference.loc[reference_month][0]
-            )
-            * 100
-        )
-    except Exception:
+        dist_perc = round(((dis_data_target.loc[target_month][0]
+                            - dis_data_reference.loc[reference_month][0])
+                           / dis_data_reference.loc[reference_month][0])
+                          * 100)
+
+    except Exception as e:
+        print(e)
         dist_perc = "?"
 
     district_overview_scatter.title = f"Deep-dive in {district} district: The number of {indicator} changed by {dist_perc}% between {reference_month}-{reference_year} and {target_month}-{target_year}"
@@ -482,7 +487,8 @@ def change_titles(*inputs):
     try:
         data_reporting = stacked_bar_reporting_country.data
 
-        date_reporting = datetime(target_year, month_order.index(target_month) + 1, 1)
+        date_reporting = datetime(
+            int(target_year), month_order.index(target_month) + 1, 1)
 
         try:
             reported_positive = data_reporting.get("Reported a positive number").loc[
@@ -518,7 +524,7 @@ def change_titles(*inputs):
         reported_positive = "?"
 
     stacked_bar_reporting_country.title = (
-        f"Reporting: On {target_month}-{target_year}, around {reported_perc}% of facilities reported on their 105:1 form, and, out of those, {reported_positive}% reported for this {indicator}",
+        f"Reporting: On {target_month}-{target_year}, around {reported_perc}% of facilities reported on their 105:1 form, and, out of those, {reported_positive}% reported for number of {indicator}",
     )
 
     tree_map_district.title = f"Contribution of individual facilities in {district} district to the total number of {indicator} on {target_month}-{target_year}"
@@ -526,7 +532,7 @@ def change_titles(*inputs):
     return [
         country_overview_scatter.title,
         district_overview_scatter.title,
-        stacked_bar_reporting_country.title,
+        # stacked_bar_reporting_country.title,
         tree_map_district.title,
     ]
 

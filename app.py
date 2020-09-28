@@ -1,10 +1,11 @@
 # from COC_dashboard import data_story
 # from demo_v1 import data_story
+
 import sys
 
 sys.path.insert(0, "./coc-dashboard")
 
-from view import ds
+from view import ds  # NOQA: E402
 
 server = ds.app.server
 
