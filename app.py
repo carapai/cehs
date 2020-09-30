@@ -9,9 +9,11 @@ from view import ds  # NOQA: E402
 
 server = ds.app.server
 
+from callbacks import define_callbacks
+
+define_callbacks(ds)
+
 if __name__ == "__main__":
-    from callbacks import define_callbacks
-    define_callbacks(ds)
     ds.run(dev=True)
 else:
     ds.set_layout_and_callbacks()
