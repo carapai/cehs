@@ -1,90 +1,59 @@
-
-import pandas as pd
 import numpy as np
-
-from helpers import (filter_df_by_policy,
-                     filter_df_by_indicator,
-                     filter_by_district,
-                     filter_df_by_dates,
-                     get_sub_dfs,
-                     check_index,
-                     month_order,
-                     index_base_columns,
-                     timeit)
-
-
-# @timeit
-def tree_map_district_dated_data(dfs, static, *, outlier,
-                                 indicator, district,
-                                 target_year, target_month,
-                                 reference_year, reference_month, **kwargs):
-
-    df = filter_df_by_policy(dfs, outlier)
-
-    df = filter_df_by_indicator(
-        df, indicator, persist_columns=index_base_columns)
-
-    # TODO check how the date function works such that it shows only target date
-
-    df_district_dated = filter_df_by_dates(
-        df, target_year, target_month, reference_year, reference_month)
-
-    df_district_dated = filter_by_district(
-        df_district_dated, district)
-
-    return df_district_dated
-
-
-# @timeit
-def scatter_facility_data(dfs, static, *, outlier,
-                          indicator, district, facility, **kwargs):
-
-    df = filter_df_by_policy(dfs, outlier)
-
-    df = filter_df_by_indicator(
-        df, indicator, persist_columns=index_base_columns)
-
-    df_facility = filter_by_district(df, district)
-
-    # TODO Reorder such that its the one facility with the on selected data max value that shows
-
-    if facility:
-        df_facility = df_facility[df_facility.facility_name == facility].reset_index(
-            drop=True)
-    else:
-        df_facility = df_facility[df_facility.facility_name ==
-                                  df_facility.facility_name[0]].reset_index(drop=True)
-
-    return df_facility
+import pandas as pd
+from store import check_index, timeit, get_sub_dfs, init_data_set, month_order
+from package.layout.area_card import AreaDataCard
+from package.layout.chart_card import ChartDataCard
 
 
 @timeit
 def tree_map_district_dated_plot(data):
 
-    data_in = data.get('district_dated')
+    data_in = data.get("district_dated")
     data_in = check_index(data_in)
     val_col = data_in.columns[0]
-    data_in[val_col] = data_in[val_col].apply(
-        lambda x: int(x) if pd.notna(x) else 0)
+    data_in[val_col] = data_in[val_col].apply(lambda x: int(x) if pd.notna(x) else 0)
     data_in = data_in.reset_index()
     data_in = data_in[data_in.date == data_in.date.max()].reset_index()
     district_name = data_in.id[0]
     data_tree = data_in.pivot_table(
-        values=val_col,
-        index=['facility_name'],
-        columns='date',
-        aggfunc=np.sum)
+        values=val_col, index=["facility_name"], columns="date", aggfunc=np.sum
+    )
     data_out = {district_name: data_tree}
     return data_out
 
 
 @timeit
 def scatter_facility_plot(data):
-    data = data.get('facility')
+    data = data.get("facility")
 
     data = check_index(data)
     data = data[data[data.columns[0]] > 0]
-    data = get_sub_dfs(
-        data, 'year', [2018, 2019, 2020], 'month', month_order)
+    data = get_sub_dfs(data, "year", [2018, 2019, 2020], "month", month_order)
 
     return data
+
+
+tree_map_district = AreaDataCard(
+    title="The contribution of individual facilities in the selected district",
+    data=init_data_set,
+    data_transform=tree_map_district_dated_plot,
+    fig_object="Treemap",
+)
+tree_map_district.set_colors({"fig": ["#e2d5d1", "#96c0e0", "#3c6792"]})
+
+
+facility_scatter = ChartDataCard(
+    fig_title="Evolution of $label$ (click on the graph above to filter)",
+    data=init_data_set,
+    data_transform=scatter_facility_plot,
+)
+
+facility_scatter.set_colors(
+    {
+        "fig": {
+            2018: "rgb(185, 221, 241)",
+            2019: "rgb(106, 155, 195)",
+            2020: "rgb(200, 19, 60)",
+        }
+    }
+)

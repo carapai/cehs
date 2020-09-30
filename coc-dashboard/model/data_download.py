@@ -5,22 +5,26 @@ import pandas as pd
 
 
 class Datadownload:
-
     def __init__(self):
 
-        #self.elements = elements
+        # self.elements = elements
         self.callbacks = []
 
     @property
     def layout(self):
 
-        layout = html.Div([
-
-            html.A(dbc.Button('Download data', className='mb-3', id="download"),
-                   id="download-excel", href='', download="data.xlsx", style={'position': 'fixed', 'right': '140px', 'top': '20px'}),
-
-
-        ], className='top')
+        layout = html.Div(
+            [
+                html.A(
+                    dbc.Button("Download data", className="mb-3", id="download"),
+                    id="download-excel",
+                    href="",
+                    download="data.xlsx",
+                    style={"position": "fixed", "right": "140px", "top": "20px"},
+                ),
+            ],
+            className="top",
+        )
         return layout
 
     def _requires_dropdown(self):

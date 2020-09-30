@@ -1,43 +1,40 @@
-
 import pandas as pd
+from package.layout.chart_card import ChartDataCard
 
-from helpers import (filter_df_by_policy,
-                     filter_df_by_indicator,
-                     get_national_sum,
-                     get_percentage,
-                     get_sub_dfs,
-                     month_order,
-                     index_base_columns,
-                     timeit)
-
-
-# @timeit
-def scatter_country_data(dfs, static, *, outlier, indicator, indicator_type, **kwargs):
-
-    df = filter_df_by_policy(dfs, outlier)
-
-    df = filter_df_by_indicator(
-        df, indicator, persist_columns=index_base_columns)
-
-    df_country = get_national_sum(df, indicator)
-
-    df_country = get_percentage(df_country,
-                                static.get('population data'),
-                                static.get('target population type'),
-                                indicator_type,
-                                indicator, all_country=True)
-
-    return df_country
+from store import get_sub_dfs, timeit, month_order, init_data_set
 
 
 @timeit
 def scatter_country_plot(df):
 
-    df_country = df.get('country')
+    df_country = df.get("country")
 
     df_country = df_country[df_country[df_country.columns[0]] > 0]
 
     df_country = get_sub_dfs(
-        df_country, 'year', [2018, 2019, 2020], 'month', month_order)
+        df_country, "year", [2018, 2019, 2020], "month", month_order
+    )
 
     return df_country
+
+
+# DATACARD 1 #
+
+
+country_overview_scatter = ChartDataCard(
+    title="Overview: Across the country, the number of $label$ changed by between 04-2019 and 04-2020",
+    fig_title="Total number of $label$ across the country",
+    data=init_data_set,
+    data_transform=scatter_country_plot,
+    fig_type="Scatter",
+)
+
+country_overview_scatter.set_colors(
+    {
+        "fig": {
+            2018: "rgb(185, 221, 241)",
+            2019: "rgb(106, 155, 195)",
+            2020: "rgb(200, 19, 60)",
+        }
+    }
+)
