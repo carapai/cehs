@@ -1,3 +1,3 @@
 import pathlib
 
-here = pathlib.Path().resolve() / 'coc-dashboard/package'
+here = pathlib.Path().resolve() / "coc-dashboard/package"
