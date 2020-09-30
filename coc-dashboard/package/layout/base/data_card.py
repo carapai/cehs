@@ -12,40 +12,39 @@ import plotly.graph_objects as go
 
 class DataCard:
 
-    default_colors = {'title': '#3c6792',
-                      'subtitle': '#555555',
-                      'text': '#363638',
-                      'fig': ['#b00d3b', '#f77665', '#e2d5d1', '#96c0e0', '#3c6792']
-                      }
+    default_colors = {
+        "title": "#3c6792",
+        "subtitle": "#555555",
+        "text": "#363638",
+        "fig": ["#b00d3b", "#f77665", "#e2d5d1", "#96c0e0", "#3c6792"],
+    }
 
     def __init__(self, data: {str: pd.DataFrame} = None, **kwargs):
 
         # self._dropdowns = kwargs.get('dropdowns')
 
         # Data
-        self.data_transform = kwargs.get('data_transform')
+        self.data_transform = kwargs.get("data_transform")
         self.__data = {}
         self.data = data or {}
 
         # Content
-        self.title = kwargs.get('title', '')
-        self.figure_title = kwargs.get('fig_title', '')
-        self.key_points = kwargs.get('key_points')
+        self.title = kwargs.get("title", "")
+        self.figure_title = kwargs.get("fig_title", "")
+        self.key_points = kwargs.get("key_points")
 
         # Style
         self.__colors = self.default_colors.copy()
-        self.set_colors(kwargs.get('colors', self.default_colors.copy()))
+        self.set_colors(kwargs.get("colors", self.default_colors.copy()))
 
         # Layout
         # Orientation
-        self.orientation_left = kwargs.get(
-            'orientation_left', True)
-        self.orientation_vertical = kwargs.get(
-            'orientation_vertical', False)
+        self.orientation_left = kwargs.get("orientation_left", True)
+        self.orientation_vertical = kwargs.get("orientation_vertical", False)
 
         # Private properties
 
-        self.__figure = kwargs.get('figure')
+        self.__figure = kwargs.get("figure")
         self.__layout = None
         self.__name = None
 
@@ -55,7 +54,7 @@ class DataCard:
 
         # Housekeeping
         # self._data_columns = self._get_all_columns()
-        self._data_columns = ['One'] # !FIXME
+        self._data_columns = ["One"]  # !FIXME
 
         # Callbacks
 
@@ -66,7 +65,6 @@ class DataCard:
         #      'output': [(f'{self.my_name}_figure', 'figure'),
         #                 (f'{self.my_name}_fig_title', 'children')]
         #      }]
-
 
     @property
     def colors(self):
@@ -82,11 +80,10 @@ class DataCard:
 
     @data.setter
     def data(self, value):
-        assert type(value) == dict, \
-               'Data should be dict with pandas DataFrame as values'
-        self.__data = self.data_transform(value) \
-                      if self.data_transform \
-                      else value
+        assert (
+            type(value) == dict
+        ), "Data should be dict with pandas DataFrame as values"
+        self.__data = self.data_transform(value) if self.data_transform else value
 
     @property
     def figure(self):
@@ -95,10 +92,9 @@ class DataCard:
 
     @figure.setter
     def figure(self, fig):
-        assert type(
-            fig) == go.Figure, 'Figure should be plotly Graph Object Figure'
+        assert type(fig) == go.Figure, "Figure should be plotly Graph Object Figure"
         fig.update_layout(
-            margin={'r': 0, 't': 20, 'l': 0, 'b': 20},
+            margin={"r": 0, "t": 20, "l": 0, "b": 20},
             coloraxis=dict(colorbar_len=1),
             showlegend=True,
         )
@@ -113,10 +109,10 @@ class DataCard:
     def layout(self, value):
         self.__layout = value
 
-    @ property
+    @property
     def my_name(self):
         if self.__name is None:
-            self.__name = str(self).split('>')[0][-11:]
+            self.__name = str(self).split(">")[0][-11:]
         return self.__name
 
     @property
@@ -133,26 +129,39 @@ class DataCard:
 
     def _get_figure(self, data):
         raise NotImplementedError(
-            'Every child method should implement _get_figure(self,data) method.')
+            "Every child method should implement _get_figure(self,data) method."
+        )
 
     def __get_layout(self):
-        '''Get the static plotly layout of a data card'''
-        els = [self.__get_figure_layout() if self.data or self.figure else None,
-               self.__get_text_layout(self.key_points) if self.key_points else None]
+        """Get the static plotly layout of a data card"""
+        els = [
+            self.__get_figure_layout() if self.data or self.figure else None,
+            self.__get_text_layout(self.key_points) if self.key_points else None,
+        ]
 
-        layout = dbc.Col([
-            dbc.Row(
-                dbc.Col(
-                    html.H3(self.__format_string(self.title, self.data),
-                            style={'color': self.colors['title'],
-                                   'text-align': 'center'},
-                            className='w-100',
-                            id=f'{self.my_name}_title'
-                            ),
-                    className='data-card__header-container'
-                ) if self.title != '' else None
-            ),
-            *self.__get_orientation(els)], className="m-bot-24", id=f'{self.my_name}_layout')
+        layout = dbc.Col(
+            [
+                dbc.Row(
+                    dbc.Col(
+                        html.H3(
+                            self.__format_string(self.title, self.data),
+                            style={
+                                "color": self.colors["title"],
+                                "text-align": "center",
+                            },
+                            className="w-100",
+                            id=f"{self.my_name}_title",
+                        ),
+                        className="data-card__header-container",
+                    )
+                    if self.title != ""
+                    else None
+                ),
+                *self.__get_orientation(els),
+            ],
+            className="m-bot-24",
+            id=f"{self.my_name}_layout",
+        )
 
         return layout
 
@@ -160,25 +169,26 @@ class DataCard:
 
     def _get_figure(self, data):
         raise NotImplementedError(
-            'Every child method should implement _get_figure(self,data) method.')
+            "Every child method should implement _get_figure(self,data) method."
+        )
 
     def __get_figure_layout(self):
         layout = dbc.Col(
             [
-                dbc.Row(
-                    self.__get_figure_title_layout()
-                ),
+                dbc.Row(self.__get_figure_title_layout()),
                 # dbc.Row(
                 #     self.__get_dropdown_layout(),
                 #     className='dropdown-section'
                 # ),
                 dbc.Row(
                     dbc.Col(
-                        dcc.Graph(figure=self.figure,
-                                  config={'displayModeBar': False},
-                                  id=f'{self.my_name}_figure')
+                        dcc.Graph(
+                            figure=self.figure,
+                            config={"displayModeBar": False},
+                            id=f"{self.my_name}_figure",
+                        )
                     )
-                )
+                ),
             ],
         )
         return layout
@@ -188,12 +198,14 @@ class DataCard:
     def _get_figure_title(self, data):
         formated_fig_title = self.__format_string(self.__figure_title, data)
 
-        fig_title = html.H5(html.B(formated_fig_title),
-                            style={'color': self.colors['subtitle'],
-                                   'text-align': 'center',
-                                   'width': '100%'
-                                   }
-                            )
+        fig_title = html.H5(
+            html.B(formated_fig_title),
+            style={
+                "color": self.colors["subtitle"],
+                "text-align": "center",
+                "width": "100%",
+            },
+        )
 
         return fig_title
 
@@ -201,9 +213,9 @@ class DataCard:
 
         figure_title_layout = dbc.Col(
             self.figure_title,
-            align='center',
-            style={'text-align': 'center'},
-            id=f'{self.my_name}_fig_title'
+            align="center",
+            style={"text-align": "center"},
+            id=f"{self.my_name}_fig_title",
         )
 
         return figure_title_layout
@@ -216,21 +228,27 @@ class DataCard:
 
         dropdown_layout = None
         if self._requires_dropdown():
-            dropdown_layout = dbc.Col([
-                html.Div(
-                    html.P("Please select a metric:",
-                           className='text-center m-0 p-0'),
-                    style={'color': self.colors['text']}),
-                html.Div(
-                    dcc.Dropdown(id=f'{self.my_name}_dropdown',
-                                 options=[{'label': x, 'value': x}
-                                          for x in self._data_columns],
-                                 # TODO: This needs to be updated to accept regions names!
-                                 value=self._data_columns[0],
-                                 clearable=False
-                                 )
-                )
-            ])
+            dropdown_layout = dbc.Col(
+                [
+                    html.Div(
+                        html.P(
+                            "Please select a metric:", className="text-center m-0 p-0"
+                        ),
+                        style={"color": self.colors["text"]},
+                    ),
+                    html.Div(
+                        dcc.Dropdown(
+                            id=f"{self.my_name}_dropdown",
+                            options=[
+                                {"label": x, "value": x} for x in self._data_columns
+                            ],
+                            # TODO: This needs to be updated to accept regions names!
+                            value=self._data_columns[0],
+                            clearable=False,
+                        )
+                    ),
+                ]
+            )
 
         return dropdown_layout
 
@@ -242,31 +260,51 @@ class DataCard:
 
     def __get_orientation(self, els):
         els = els if self.orientation_left else els[::-1]
-        return [dbc.Row(e) for e in els] if self.orientation_vertical else [dbc.Row(els)]
+        return (
+            [dbc.Row(e) for e in els] if self.orientation_vertical else [dbc.Row(els)]
+        )
 
     ## TEXT SECTION ##
 
     def __get_text_layout(self, text):
-        text_section_layout = dbc.Col([
-            dbc.Row(
-                dbc.Col(html.Div([self.__unwrap_section_and_points(section, points)
-                                  for section, points in text.items()],
-                                 className='h-90 w-75 text-section'
-                                 )
+        text_section_layout = dbc.Col(
+            [
+                dbc.Row(
+                    dbc.Col(
+                        html.Div(
+                            [
+                                self.__unwrap_section_and_points(section, points)
+                                for section, points in text.items()
+                            ],
+                            className="h-90 w-75 text-section",
                         )
-            )
-        ],
+                    )
+                )
+            ],
         )
 
         return text_section_layout
 
     def __unwrap_section_and_points(self, section, points):
-        layout = html.Div([
-            html.Div(html.H5(self.__format_string(section, self.data), style={
-                     'color': self.colors['subtitle']})),
-            html.Div(
-                html.Ul([html.Li(html.P(self.__format_string(item, self.data))) for item in points]),
-                        style = {'color': self.colors['text']})])
+        layout = html.Div(
+            [
+                html.Div(
+                    html.H5(
+                        self.__format_string(section, self.data),
+                        style={"color": self.colors["subtitle"]},
+                    )
+                ),
+                html.Div(
+                    html.Ul(
+                        [
+                            html.Li(html.P(self.__format_string(item, self.data)))
+                            for item in points
+                        ]
+                    ),
+                    style={"color": self.colors["text"]},
+                ),
+            ]
+        )
         return layout
 
     ###############
@@ -275,11 +313,13 @@ class DataCard:
 
     def set_colors(self, new_colors):
         for key, value in new_colors.items():
-            if key == 'fig':
-                figure_colors = new_colors.get('fig')
-                self.__colors['fig'] = figure_colors \
-                    if type(figure_colors) == dict \
+            if key == "fig":
+                figure_colors = new_colors.get("fig")
+                self.__colors["fig"] = (
+                    figure_colors
+                    if type(figure_colors) == dict
                     else self.__get_dict_colors_from_list(figure_colors)
+                )
             else:
                 self.__colors[key] = value
 
@@ -290,9 +330,10 @@ class DataCard:
                 colors_dict = dict(zip(self.data, color_list))
             else:
                 if len(color_list) < 2:
-                    color_list.insert(0, '#e2d5d1')
-                colors_dict = {next(iter(self.data.keys())):
-                               px.colors.make_colorscale(color_list)}
+                    color_list.insert(0, "#e2d5d1")
+                colors_dict = {
+                    next(iter(self.data.keys())): px.colors.make_colorscale(color_list)
+                }
         return colors_dict
 
     #################
@@ -301,53 +342,53 @@ class DataCard:
 
     def __format_string(self, string, data):
         formatted_string = string
-        if '$' in string:
+        if "$" in string:
 
-            assert data != {}, 'Data has to be defined for labels to be dynamic'
+            assert data != {}, "Data has to be defined for labels to be dynamic"
 
-            keys = {
-                '$label$': next(iter(data.values())).columns[0]
-            }
+            keys = {"$label$": next(iter(data.values())).columns[0]}
 
             # first, get rid of static replacements (first column names etc)
             for key, value in keys.items():
                 formatted_string = formatted_string.replace(key, str(value))
 
             # deal with complex labels
-            while '$' in formatted_string:
-                sub = self.__get_substring_between_elements(
-                    formatted_string, '$')
+            while "$" in formatted_string:
+                sub = self.__get_substring_between_elements(formatted_string, "$")
 
                 try:
-                    if 'trace' in sub:
-                        trace_index = sub.split('.')[1]
-                        formatted_string = formatted_string.replace(f'$trace.{trace_index}$',
-                                                                    f'{list(data.keys())[int(trace_index)]}')
+                    if "trace" in sub:
+                        trace_index = sub.split(".")[1]
+                        formatted_string = formatted_string.replace(
+                            f"$trace.{trace_index}$",
+                            f"{list(data.keys())[int(trace_index)]}",
+                        )
 
-                    if 'data' in sub:
-                        _, index, aggregation = sub.split('.')
+                    if "data" in sub:
+                        _, index, aggregation = sub.split(".")
                         func = getattr(np, aggregation)
-                        formatted_string = formatted_string.replace(f'$data.{index}.{aggregation}$',
-                                                                    f'{func(list(data.values())[int(index)])[0]}')
+                        formatted_string = formatted_string.replace(
+                            f"$data.{index}.{aggregation}$",
+                            f"{func(list(data.values())[int(index)])[0]}",
+                        )
 
                 except Exception as e:  # !TODO handle errors explicitly
                     print(e)
                     print(
-                        'Dynamic string parsing error. Are you passing all necessary arguments?')
+                        "Dynamic string parsing error. Are you passing all necessary arguments?"
+                    )
                     return formatted_string
 
         return formatted_string
 
-    def __get_substring_between_elements(self, string, element, closing_element='$'):
+    def __get_substring_between_elements(self, string, element, closing_element="$"):
         try:
             out = string.split(element, 1)[1]
-            out = out.split(closing_element, 1)[0] \
-                if closing_element in out \
-                else None
+            out = out.split(closing_element, 1)[0] if closing_element in out else None
         except IndexError as e:
             out = None
             print(e)
-            print('All dynamic strings should have closing $ sign')
+            print("All dynamic strings should have closing $ sign")
         return out
 
     def _get_data(self, data_column_name=None):
@@ -358,9 +399,11 @@ class DataCard:
             data_column_name = next(iter(self.data.values())).columns[0]
         # Get the datacolumn of each dataframe if the column exists
         # make sure that you are passing data frame, because label depends on a column name
-        column_data = {name: data[[data_column_name]]
-                       for name, data in self.data.items()
-                       if data_column_name in data.columns}
+        column_data = {
+            name: data[[data_column_name]]
+            for name, data in self.data.items()
+            if data_column_name in data.columns
+        }
         return column_data
 
     def _get_all_columns(self):
@@ -374,8 +417,8 @@ class DataCard:
         return len(self._get_all_columns()) > 1
 
     def __update_figure(self, value):
-        '''Update the map and the map title to display the data corresponding to selected variable'''
-        print(f'{self.my_name} firing a callback')
+        """Update the map and the map title to display the data corresponding to selected variable"""
+        print(f"{self.my_name} firing a callback")
         data_dict = self._get_data(value)
         self.figure = self._get_figure(data_dict)
         self.figure_title = self._get_figure_title(data_dict)

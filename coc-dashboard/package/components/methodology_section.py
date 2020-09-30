@@ -6,31 +6,46 @@ from package.elements.nested_dropdown import NestedDropdown
 
 
 class MethodologySection:
-
     def __init__(self, **kwargs):
-        self.data = kwargs.get('data', '')
-        self.title = kwargs.get('title', '')
+        self.data = kwargs.get("data", "")
+        self.title = kwargs.get("title", "")
 
     @property
     def layout(self):
-        el_layout = [dbc.Row(dbc.Col([
-            html.Div(html.H6(html.B(x['sub_title']))),
-            html.Div(html.H6(x['body'], style={'font-size': '14px'})),
-            html.Div([html.Li(d, style={'font-size': '14px'}) for d in x['list_data']]),
-        ])
-        ) for x in self.data]
+        el_layout = [
+            dbc.Row(
+                dbc.Col(
+                    [
+                        html.Div(html.H6(html.B(x["sub_title"]))),
+                        html.Div(html.H6(x["body"], style={"font-size": "14px"})),
+                        html.Div(
+                            [
+                                html.Li(d, style={"font-size": "14px"})
+                                for d in x["list_data"]
+                            ]
+                        ),
+                    ]
+                )
+            )
+            for x in self.data
+        ]
 
-        layout = [dbc.Row(
-            dbc.Col(
-                html.Div(
-                    html.H4(html.B(self.title),
-                            style={'color': '#00000',
-                                   'text-align': 'center',
-                                   'text-decoration': 'underline',
-                                   'width': '100%'
-                                   }
-                            )
-                ))
-        )] + el_layout
+        layout = [
+            dbc.Row(
+                dbc.Col(
+                    html.Div(
+                        html.H4(
+                            html.B(self.title),
+                            style={
+                                "color": "#00000",
+                                "text-align": "center",
+                                "text-decoration": "underline",
+                                "width": "100%",
+                            },
+                        )
+                    )
+                )
+            )
+        ] + el_layout
 
         return dbc.Col(layout)

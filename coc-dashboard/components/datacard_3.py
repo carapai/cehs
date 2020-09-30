@@ -1,45 +1,43 @@
-
 import pandas as pd
+from package.layout.chart_card import ChartDataCard
 
-from helpers import (filter_df_by_policy,
-                     filter_df_by_indicator,
-                     filter_by_district,
-                     get_district_sum,
-                     get_percentage,
-                     get_sub_dfs,
-                     check_index,
-                     month_order,
-                     index_base_columns,
-                     timeit)
+from store import get_sub_dfs, timeit, month_order, init_data_set
 
 
-# @timeit
-def scatter_district_data(dfs, static, *, outlier, indicator, indicator_type,
-                          district, **kwargs):
-    df = filter_df_by_policy(dfs, outlier)
-
-    df = filter_df_by_indicator(
-        df, indicator, persist_columns=index_base_columns)
-
-    df_district = filter_by_district(df, district)
-    df_district = get_district_sum(df_district, indicator)
-    df_district = get_percentage(df_district,
-                                 static.get('population data'),
-                                 static.get('target population type'),
-                                 indicator_type,
-                                 indicator)
-
-    return df_district
+from package.layout.chart_card import ChartDataCard
 
 
 @timeit
 def scatter_district_plot(df):
 
-    df_district = df.get('district')
+    df_district = df.get("district")
 
     df_district = df_district[df_district[df_district.columns[0]] > 0]
 
     df_district = get_sub_dfs(
-        df_district, 'year', [2018, 2019, 2020], 'month', month_order)
+        df_district, "year", [2018, 2019, 2020], "month", month_order
+    )
 
     return df_district
+
+
+# DATACARD 3 #
+
+
+district_overview_scatter = ChartDataCard(
+    title="Deep-dive in the selected district: The number of $label$ changed by % between 05-2019 and 05-2020",
+    fig_title="Total number of $label$ in the selected district",
+    data=init_data_set,
+    data_transform=scatter_district_plot,
+    fig_type="Scatter",
+)
+
+district_overview_scatter.set_colors(
+    {
+        "fig": {
+            2018: "rgb(185, 221, 241)",
+            2019: "rgb(106, 155, 195)",
+            2020: "rgb(200, 19, 60)",
+        }
+    }
+)
