@@ -10,6 +10,8 @@ from components import (
     stacked_bar_reporting_country,
     tree_map_district,
     reporting_map,
+    grid,
+    statistics,
 )
 
 
@@ -50,13 +52,16 @@ def change_page(*inputs):
             tree_map_district,
             facility_scatter,
         ]
-        paginator.dash_clicked = True
+        paginator.clicked = "Dashboard"
     elif "reporting-button" in changed_id:
         ds.data_cards = [
             stacked_bar_reporting_country,
             reporting_map,
             stacked_bar_district,
         ]
-        paginator.dash_clicked = False
+        paginator.clicked = "Reporting"
+    elif "overview-button" in changed_id:
+        ds.data_cards = [statistics, grid]
+        paginator.clicked = "Overview"
 
     return [ds.get_container(), paginator.get_layout()]

@@ -18,8 +18,6 @@ DEFAULTS = {
     "default_reference_month": os.environ["REFERENCE_MONTH"],
 }
 
-print(DEFAULTS)
-
 
 def initiate_dropdowns(data_outliers, indicator_group):
 

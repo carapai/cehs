@@ -91,3 +91,11 @@ body {
     display: flex;
     justify-content: center;
 }
+
+.card-district{
+    background: #78a4b8;
+}
+
+.card-facility{
+    background: #cad9e5;
+}

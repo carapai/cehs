@@ -12,6 +12,7 @@ from .cards_mutations import (
     bar_reporting_country_data,
     map_reporting_dated_data,
     scatter_reporting_district_data,
+    indicator_group,
 )
 
 # Define which function corresponds to which object
@@ -29,6 +30,7 @@ FUNC_LIST = [
     bar_reporting_country_data,
     map_reporting_dated_data,
     scatter_reporting_district_data,
+    indicator_group,
 ]
 
 FUNC_ARG_DICT = {}
@@ -48,12 +50,10 @@ FUNC_DF.index = [
     "reporting_country",
     "reporting_dated",
     "reporting_district",
+    "indicator_group",
 ]
 
 FUNC_DF.rename(columns={"index": "function"}, inplace=True)
-
-
-print(FUNC_DF)
 
 
 @timeit

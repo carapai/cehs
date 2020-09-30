@@ -50,6 +50,7 @@ CONTROLS = dict(
     reference_year=reference_date.dropdown_objects[0].value,
     reference_month=reference_date.dropdown_objects[1].value,
     facility=None,
+    indicator_group=indicator_dropdown_group.dropdown_objects[1].value,
 )
 
 LAST_CONTROLS = {}
