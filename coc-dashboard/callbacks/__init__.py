@@ -36,6 +36,7 @@ callback_ids = {
     target_date.dropdown_ids[-1]: "value",
     district_control_group.dropdown_ids[-1]: "value",
     indicator_dropdown_group.dropdown_ids[0]: "value",
+    indicator_dropdown_group.dropdown_ids[1]: "value"
 }
 
 
@@ -90,6 +91,7 @@ def define_callbacks(ds):
             "inputs": [
                 Input("dashboard-button", "n_clicks"),
                 Input("reporting-button", "n_clicks"),
+                Input("overview-button", "n_clicks"),
             ],
             "outputs": [
                 Output("ds-paginator", "children"),

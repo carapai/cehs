@@ -56,12 +56,12 @@ class Dashboard:
 
     def switch_data_set(self, data):
         for x in self.data_cards:
-            if isinstance(x, DataCard) or getattr(x, "data") is not None:
-                try:
+            try:
+                if isinstance(x, DataCard) or getattr(x, "data") is not None:
                     x.data = data
                     # x.figure = x._get_figure(x.data)
-                except AttributeError as e:
-                    print(e)
+            except AttributeError as e:
+                print(e)
 
     ###################
     #    CALLBACKS    #
