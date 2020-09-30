@@ -19,6 +19,8 @@ from store import (
     target_date,
 )
 
+from pprint import pprint as print
+
 from .global_callbacks import change_titles, global_story_callback, update_on_click
 from .user_interface import (
     change_page,
@@ -107,7 +109,10 @@ def define_callbacks(ds):
     #         "function": ,
     # },
 
+    print('==Registering callbacks==')
+
     for callback in callbacks:
+        print(callback)
         app.callback(
             output=callback.get("outputs", []),
             inputs=callback.get("inputs", []),
