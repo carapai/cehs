@@ -235,3 +235,85 @@ def scatter_reporting_district_data(dfs, static, *, indicator, district, **kwarg
     df_reporting_district = filter_by_district(df_reporting, district)
 
     return df_reporting_district
+
+
+# Indicator group grid
+
+
+def indicator_group(dfs, static, *, indicator_group, outlier, **kwargs):
+
+    df = filter_df_by_policy(dfs, outlier)
+
+    # !FIXME when mutations and store are decoupled! !IMPORTANT
+
+    groups = dict(
+        MNCH=[
+            "1st ANC Visits",
+            "4th ANC Visits",
+            "Maternity Admissions",
+            "Deliveries in unit",
+            "Deliveries in unit - live",
+            "Deliveries in unit - fresh stillbirth",
+            "Deliveries in unit - macerated stillbirth",
+            "Newborn deaths",
+            "Postnatal Visits",
+        ],
+        EPI=[
+            "BCG",
+            "DPT1",
+            "DPT3",
+            "HPV1",
+            "HPV2",
+            "MR1",
+            "PCV1",
+            "PCV3",
+            "TD1",
+            "TD2",
+            "TD3",
+            "TD4-5",
+        ],
+        GENERAL=["OPD attendance", "IPD attendance"],
+        HIV=[
+            "Tested HIV",
+            "Tested HIV positive",
+            "HIV positive linked to care",
+            "ANC tested HIV",
+            "ANC tested HIV positive",
+            "ANC initiated on ART",
+            "Mat tested HIV",
+            "Mat tested HIV positive",
+            "Mat initiated on ART",
+            "PNC tested HIV",
+            "PNC tested HIV positive",
+            "PNC initiated on ART",
+        ],
+        TB=["TB cases registered"],
+        MAL=[
+            "Malaria deaths",
+            "Malaria cases treated",
+            "Malaria cases",
+            "Malaria tests",
+        ],
+        NUT=[
+            "Number of doses of vitamin A distributed",
+            "Number of SAM admissions",
+            "Number of MAM admissions",
+            "Low weight births",
+        ],
+    )
+
+    df_groups = {"group": [], "indicator": []}
+    for group, indicators in groups.items():
+        df_groups["group"].extend([group] * len(indicators))
+        df_groups["indicator"].extend(indicators)
+
+    indicators_groups = pd.DataFrame(df_groups)
+
+    indicators = list(
+        indicators_groups[indicators_groups.group == indicator_group].indicator
+    )
+
+    columns_to_keep = index_base_columns + indicators
+    df = df[columns_to_keep]
+
+    return df

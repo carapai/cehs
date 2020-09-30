@@ -33,10 +33,9 @@ def global_story_callback(*inputs):
     target_month = inputs[5]
     district = inputs[6]
     indicator_type = inputs[7]
+    indicator_group = inputs[8]
 
-    global CONTROLS
     global LAST_CONTROLS
-
     LAST_CONTROLS = CONTROLS.copy()
 
     CONTROLS["outlier"] = outlier
@@ -47,6 +46,7 @@ def global_story_callback(*inputs):
     CONTROLS["target_month"] = target_month
     CONTROLS["reference_year"] = reference_year
     CONTROLS["reference_month"] = reference_month
+    CONTROLS["indicator_group"] = indicator_group
 
     global init_data_set
 
