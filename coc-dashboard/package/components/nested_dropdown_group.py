@@ -7,7 +7,6 @@ from package.elements.nested_dropdown import NestedDropdown
 
 
 class NestedDropdownGroup:
-
     def __init__(self, dataframe, title=None, vertical=True):
         self.dataframe = dataframe
         self.dropdowns = {}
@@ -15,11 +14,14 @@ class NestedDropdownGroup:
         self.title = title
         self.vertical = vertical
 
-        self.callbacks = [{
-            'func': self.update_dropdown_options,
-            'input': [(x, 'value'), (x, 'id'), (y, 'id')],
-            'output': [(y, 'options')]
-        } for (x, y) in zip(self.dropdown_ids[:-1], self.dropdown_ids[1:])]
+        self.callbacks = [
+            {
+                "func": self.update_dropdown_options,
+                "input": [(x, "value"), (x, "id"), (y, "id")],
+                "output": [(y, "options")],
+            }
+            for (x, y) in zip(self.dropdown_ids[:-1], self.dropdown_ids[1:])
+        ]
 
     @property
     def dropdown_ids(self):
@@ -36,7 +38,11 @@ class NestedDropdownGroup:
         parent = None
         for name in self.dataframe.columns:
             # define dropdown options
-            dropdown = NestedDropdown(id=name, options=self.dataframe[name].unique().tolist(), visible_id=False)
+            dropdown = NestedDropdown(
+                id=name,
+                options=self.dataframe[name].unique().tolist(),
+                visible_id=False,
+            )
 
             if parent:
                 parent_dropdown = self.dropdowns.get(parent)
@@ -48,21 +54,34 @@ class NestedDropdownGroup:
 
     @property
     def layout(self):
-        layout = dbc.Col([dbc.Row(html.P(self.title,
-                                         className='text-center',
-                                        style={'border-bottom': '0.5px solid gray', 'font-weidht': 'bold', 'width': '100%'})) if self.title else None]
-                        + self.get_orientation(self.dropdown_objects, vertical=self.vertical), className='p-3 m-12')
+        layout = dbc.Col(
+            [
+                dbc.Row(
+                    html.P(
+                        self.title,
+                        className="text-center",
+                        style={
+                            "border-bottom": "0.5px solid gray",
+                            "font-weidht": "bold",
+                            "width": "100%",
+                        },
+                    )
+                )
+                if self.title
+                else None
+            ]
+            + self.get_orientation(self.dropdown_objects, vertical=self.vertical),
+            className="p-3 m-12",
+        )
         return layout
 
     def _requires_dropdown(self):
         return True
 
-
     def get_orientation(self, elements, vertical=True):
         elements = [e.get_layout() for e in elements]
         layout = [dbc.Row(e) for e in elements] if vertical else [dbc.Row(elements)]
         return layout
-
 
     def update_dropdown_options(self, *inputs):
         value = inputs[0]
@@ -70,9 +89,8 @@ class NestedDropdownGroup:
         child_column = inputs[2]
         filtered_df = self.dataframe[self.dataframe[column] == value]
         options = filtered_df[child_column].unique().tolist()
-        dropdown_options = [{'label': x, 'value': x} for x in options]
+        dropdown_options = [{"label": x, "value": x} for x in options]
         return [dropdown_options]
-
 
     def attach_tail_to_callback(self, func, output):
         """Attach callback to the tail element of this dropdown group
@@ -86,7 +104,12 @@ class NestedDropdownGroup:
         """
 
         self.callbacks.append(
-            {'func': func,
-            'output': output,
-            'input': [(self.dropdown_ids[-1], 'value'), (self.dropdown_ids[-1], 'id')]}
+            {
+                "func": func,
+                "output": output,
+                "input": [
+                    (self.dropdown_ids[-1], "value"),
+                    (self.dropdown_ids[-1], "id"),
+                ],
+            }
         )

@@ -1,25 +1,27 @@
-from helpers import (filter_df_by_policy,
-                     filter_df_by_indicator,
-                     reporting_count_transform,
-                     index_base_columns,
-                     timeit)
-
-
-# @timeit
-def bar_reporting_country_data(dfs, static, *, indicator, **kwargs):
-
-    df_reporting = filter_df_by_policy(dfs, 'Reporting')
-
-    df_reporting = filter_df_by_indicator(
-        df_reporting, indicator, persist_columns=index_base_columns)
-
-    return df_reporting
+from store import timeit, reporting_count_transform, init_data_set
+from package.layout.chart_card import ChartDataCard
 
 
 @timeit
 def bar_reporting_country_plot(data):
 
-    data_in = data.get('reporting_country')
+    data_in = data.get("reporting_country")
     data_out = reporting_count_transform(data_in.copy())
 
     return data_out
+
+
+# DATACARD 5 #
+
+
+stacked_bar_reporting_country = ChartDataCard(
+    title="Reporting: On 05-2020, around % of facilities reported on their 105:1 form, and, out of these % reported for this $label$",
+    data=init_data_set,
+    data_transform=bar_reporting_country_plot,
+    fig_title="Total number of facilities reporting on their 105:1 form and reported a positive number of $label$ in country",
+    fig_object="Bar",
+)
+
+stacked_bar_reporting_country.set_colors(
+    {"fig": ["rgb(42, 87, 131)", "rgb(247, 190, 178)", "rgb(211, 41, 61)"]}
+)

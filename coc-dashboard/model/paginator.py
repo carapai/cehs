@@ -7,6 +7,8 @@ import pandas as pd
 class Paginator:
     def __init__(self):
         self.clicked = "Dashboard"
+        self.highlighted_style = {"border": "3px solid red", "fontWeight": "bold"}
+        self.default_style = {"border": "3px solid gray"}
 
     @property
     def layout(self):
@@ -26,10 +28,9 @@ class Paginator:
                             "Dashboard",
                             className="mb-3",
                             id="dashboard-button",
-                            style={"border": "3px solid red",
-                                   "font-weight": "bold"}
+                            style=self.highlighted_style
                             if self.clicked == "Dashboard"
-                            else {"border": "3px solid gray"},
+                            else self.default_style,
                         )
                     ),
                     dbc.Col(
@@ -37,13 +38,21 @@ class Paginator:
                             "Reporting",
                             className="mb-3",
                             id="reporting-button",
-                            style={"border": "3px solid red",
-                                   "font-weight": "bold"}
-                            if self.clicked == "Dashboard"
-                            else {"border": "3px solid gray"},
+                            style=self.highlighted_style
+                            if self.clicked == "Reporting"
+                            else self.default_style,
                         )
-                    )
-
+                    ),
+                    dbc.Col(
+                        dbc.Button(
+                            "Overview",
+                            className="mb-3",
+                            id="overview-button",
+                            style=self.highlighted_style
+                            if self.clicked == "Overview"
+                            else self.default_style,
+                        )
+                    ),
                 ]
             )
         ]

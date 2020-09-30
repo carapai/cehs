@@ -7,39 +7,45 @@ import pandas as pd
 
 
 class NestedDropdown:
-
     def __init__(self, id, options, **kwargs):
         self.id = id
         self.options = self.list_to_options(options)
-        self.value = kwargs.pop('value', options[0])
+        self.value = kwargs.pop("value", options[0])
 
         self.parents = []
         self.children = []
-        self.visible_id = kwargs.pop('visible_id', True)
+        self.visible_id = kwargs.pop("visible_id", True)
 
         self.dropdown_settings = kwargs
 
     def list_to_options(self, options):
-        return [{'value': x, 'label': x} for x in options]
+        return [{"value": x, "label": x} for x in options]
 
     def get_layout(self):
         self.set_layout(self.options, **self.dropdown_settings)
         return self.layout
 
     def set_layout(self, options, **kwargs):
-        layout = [html.Div(
-            html.P(self.id,
-                   className='text-center m-0 p-0'),
-            style={'color': '#363638'}) if self.visible_id else None,
-            dcc.Dropdown(options=options,
-                         id=self.id,
-                         value=self.value,
-                         persistence=True,
-                         persistence_type='session',
-                         className='m-1',
-                         **kwargs
-                         )]
-        self.layout = dbc.Col(layout, style={'overflow': 'visible !important'}, className='m-12')
+        layout = [
+            html.Div(
+                html.P(self.id, className="text-center m-0 p-0"),
+                style={"color": "#363638"},
+            )
+            if self.visible_id
+            else None,
+            dcc.Dropdown(
+                options=options,
+                id=self.id,
+                value=self.value,
+                persistence=True,
+                persistence_type="session",
+                className="m-1",
+                **kwargs
+            ),
+        ]
+        self.layout = dbc.Col(
+            layout, style={"overflow": "visible !important"}, className="m-12"
+        )
 
     def add_child(self, child):
         if child not in self.children:
