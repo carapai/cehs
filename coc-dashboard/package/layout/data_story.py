@@ -42,7 +42,6 @@ class DataStory(Dashboard):
                 for x in self.data_cards
             ]
             + [self.__get_footer()]
-            + [el.layout for el in self.ind_elements]
         )
 
         return layout
@@ -62,7 +61,11 @@ class DataStory(Dashboard):
                             rel="stylesheet",
                         ),
                         dcc.Location(id="url", refresh=False),
-                    ]
+                    ],
+                    id="meta",
+                ),
+                html.Div(
+                    [el.layout for el in self.ind_elements], id="independent-elements"
                 ),
                 html.Div(self.get_container(), id="ds-paginator"),
             ],

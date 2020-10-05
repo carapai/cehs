@@ -53,6 +53,9 @@ CONTROLS = dict(
     indicator_group=indicator_dropdown_group.dropdown_objects[1].value,
 )
 
+print("Init control dict")
+print(CONTROLS)
+
 LAST_CONTROLS = {}
 
 # CREDENTIALS
