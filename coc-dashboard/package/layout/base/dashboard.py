@@ -51,8 +51,8 @@ class Dashboard:
         self.app.run_server(debug=dev, use_reloader=dev, **kwargs)
 
     def set_layout_and_callbacks(self):
-        self._set_layout()
         self._define_callbacks()
+        self._set_layout()
 
     def switch_data_set(self, data):
         for x in self.data_cards:

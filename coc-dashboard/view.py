@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-
 from pprint import pprint as print
 
 import dash
@@ -10,35 +9,36 @@ import geopandas as gpd
 import pandas as pd
 from dotenv import find_dotenv, load_dotenv
 
-from store import define_datasets
-from dropdown import initiate_dropdowns
-from store import month_order
-from model import CardLayout, Datadownload, Methodology, Paginator
-from package.layout.data_story import DataStory
-from package.components.methodology_section import MethodologySection
-from package.components.nested_dropdown_group import NestedDropdownGroup
-
-from store import download_file, meth_data
+import store
 
 from store import (
     credentials,
-    meth_date,
-    indicator_group,
     data_outliers,
-    static,
+    define_datasets,
+    download_file,
+    indicator_group,
+    meth_data,
+    meth_date,
+    month_order,
     side_nav,
+    static,
 )
 
 from components import (
-    country_overview_scatter,
     country_overview,
+    country_overview_scatter,
     district_overview_scatter,
     facility_scatter,
-    stacked_bar_reporting_country,
     reporting_map,
     stacked_bar_district,
+    stacked_bar_reporting_country,
     tree_map_district,
 )
+
+from model import CardLayout, Datadownload, Methodology, Paginator
+from package.components.methodology_section import MethodologySection
+from package.components.nested_dropdown_group import NestedDropdownGroup
+from package.layout.data_story import DataStory
 
 
 load_dotenv(find_dotenv())
