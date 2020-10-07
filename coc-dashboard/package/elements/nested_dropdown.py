@@ -10,6 +10,7 @@ class NestedDropdown:
     def __init__(self, id, options, **kwargs):
         self.id = id
         self.options = self.list_to_options(options)
+        self.__value = None
         self.value = kwargs.pop("value", options[0])
 
         self.parents = []
@@ -17,6 +18,18 @@ class NestedDropdown:
         self.visible_id = kwargs.pop("visible_id", True)
 
         self.dropdown_settings = kwargs
+
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, val):
+        try:
+            self.__value = str(val)
+        except Exception as e:
+            print(e)
+            print("Error casting value to string.")
 
     def list_to_options(self, options):
         return [{"value": x, "label": x} for x in options]
