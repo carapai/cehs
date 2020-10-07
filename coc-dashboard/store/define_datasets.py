@@ -74,7 +74,8 @@ def define_datasets(static, dfs, controls, last_controls={}, datasets={}):
         for i in FUNC_DF.index:
             args = set(FUNC_DF.loc[i, range(0, 7)].unique())
             if len(args.intersection(changed_keys)) > 0:
-                datasets[i] = FUNC_DF.loc[i, "function"](dfs, static, **controls)
+                datasets[i] = FUNC_DF.loc[i, "function"](
+                    dfs, static, **controls)
                 func_name = str(FUNC_DF.loc[i, "function"]).split(" ")[1]
                 print(f"ran function {func_name}")
 
