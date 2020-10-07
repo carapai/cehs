@@ -6,6 +6,9 @@ from package.components.nested_dropdown_group import NestedDropdownGroup
 from package.components.methodology_section import MethodologySection
 
 import os
+from dotenv import find_dotenv, load_dotenv
+
+load_dotenv(find_dotenv())
 
 DEFAULTS = {
     "default_outlier": os.environ["OUTLIER"],
@@ -63,22 +66,27 @@ def initiate_dropdowns(data_outliers, indicator_group):
     # TODO Have those defined as this month - 1
 
     target_date.dropdown_objects[0].value = DEFAULTS.get("default_target_year")
-    target_date.dropdown_objects[1].value = DEFAULTS.get("default_target_month")
+    target_date.dropdown_objects[1].value = DEFAULTS.get(
+        "default_target_month")
 
     date_columns.columns = ["Reference Year", "Reference Month"]
     reference_date = NestedDropdownGroup(
         date_columns, title="Select reference date", vertical=False
     )
 
-    reference_date.dropdown_objects[0].value = DEFAULTS.get("default_reference_year")
-    reference_date.dropdown_objects[1].value = DEFAULTS.get("default_reference_month")
+    reference_date.dropdown_objects[0].value = DEFAULTS.get(
+        "default_reference_year")
+    reference_date.dropdown_objects[1].value = DEFAULTS.get(
+        "default_reference_month")
 
     district_control_group = NestedDropdownGroup(
-        data_outliers[["id"]].rename(columns={"id": "Please select a district"}),
+        data_outliers[["id"]].rename(
+            columns={"id": "Please select a district"}),
         title="Select a district",
     )
 
-    district_control_group.dropdown_objects[0].value = DEFAULTS.get("default_district")
+    district_control_group.dropdown_objects[0].value = DEFAULTS.get(
+        "default_district")
 
     side_nav = SideNav(
         [
