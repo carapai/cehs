@@ -1,5 +1,5 @@
 from dash import callback_context
-from store import download_file, dfs
+from store import download_file, dfs, timeit
 from view import ds, paginator
 from components import (
     country_overview_scatter,
@@ -15,6 +15,7 @@ from components import (
 )
 
 
+@timeit
 def toggle_fade_controls(n, is_in):
     if not n:
         # Button has never been clicked
@@ -23,6 +24,7 @@ def toggle_fade_controls(n, is_in):
     return [out]
 
 
+@timeit
 def toggle_fade_info(n, is_in):
     if not n:
         # Button has never been clickedppy
@@ -31,6 +33,7 @@ def toggle_fade_info(n, is_in):
     return [out2]
 
 
+@timeit
 def download_data(n_clicks):
     if n_clicks:
         print("Yes")
@@ -41,6 +44,7 @@ def download_data(n_clicks):
         return [None]
 
 
+@timeit
 def change_page(*inputs):
     changed_id = [p["prop_id"] for p in callback_context.triggered][0]
 

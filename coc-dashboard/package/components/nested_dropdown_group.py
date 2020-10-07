@@ -4,15 +4,22 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output
 import pandas as pd
 from package.elements.nested_dropdown import NestedDropdown
+from store import timeit
 
 
 class NestedDropdownGroup:
     def __init__(self, dataframe, title=None, vertical=True):
+        try:
+            for col in dataframe.columns:
+                dataframe[col] = dataframe[col].astype(str)
+        except Exception as e:
+            print(e)
+            print("Error casting dropdown options to string type")
         self.dataframe = dataframe
         self.dropdowns = {}
-        self.define_dropdowns()
         self.title = title
         self.vertical = vertical
+        self.define_dropdowns()
 
         self.callbacks = [
             {
@@ -42,6 +49,7 @@ class NestedDropdownGroup:
                 id=name,
                 options=self.dataframe[name].unique().tolist(),
                 visible_id=False,
+                clearable=False,
             )
 
             if parent:
@@ -83,6 +91,7 @@ class NestedDropdownGroup:
         layout = [dbc.Row(e) for e in elements] if vertical else [dbc.Row(elements)]
         return layout
 
+    @timeit
     def update_dropdown_options(self, *inputs):
         value = inputs[0]
         column = inputs[1]
