@@ -6,7 +6,7 @@ from .geopopulation import static, shapefile
 from .read_data import read_data
 from .static_info import *
 import os
-from dropdown import initiate_dropdowns
+from dropdown import initiate_dropdowns, set_dropdown_defaults
 
 # READ FROM DATABASE
 
@@ -39,6 +39,14 @@ for key, df in dfs.items():
     target_date,
     district_control_group,
 ) = initiate_dropdowns(data_outliers, indicator_group)
+
+set_dropdown_defaults(
+    outlier_policy_dropdown_group,
+    target_date,
+    reference_date,
+    indicator_dropdown_group,
+    district_control_group,
+)
 
 CONTROLS = dict(
     outlier=outlier_policy_dropdown_group.dropdown_objects[0].value,

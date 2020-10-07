@@ -1,28 +1,30 @@
-from store import (
-    reference_date,
-    target_date,
-    district_control_group,
-    static,
-    init_data_set,
-    define_datasets,
-    dfs,
-)
+from datetime import datetime
 
 from components import (
     country_overview_scatter,
-    tree_map_district,
     district_overview_scatter,
+    facility_scatter,
     stacked_bar_district,
     stacked_bar_reporting_country,
-    facility_scatter,
+    tree_map_district,
 )
-
-from datetime import datetime
-from store import month_order
+from store import (
+    CONTROLS,
+    LAST_CONTROLS,
+    define_datasets,
+    dfs,
+    district_control_group,
+    init_data_set,
+    month_order,
+    reference_date,
+    static,
+    target_date,
+    timeit,
+)
 from view import ds
-from store import CONTROLS, LAST_CONTROLS, init_data_set
 
 
+@timeit
 def global_story_callback(*inputs):
 
     outlier = inputs[0]
@@ -63,6 +65,7 @@ def global_story_callback(*inputs):
     return [ds.get_layout()]
 
 
+@timeit
 def change_titles(*inputs):
 
     outlier = inputs[0]
@@ -172,6 +175,7 @@ def change_titles(*inputs):
     ]
 
 
+@timeit
 def update_on_click(*inputs):
 
     inp = inputs[0]

@@ -21,6 +21,17 @@ DEFAULTS = {
 
 def initiate_dropdowns(data_outliers, indicator_group):
 
+    years = [2018] * 12 + [2019] * 12 + [2020] * 12
+
+    date_columns = pd.DataFrame({"year": years, "month": month_order * 3})
+    date_columns.year = date_columns.year.astype(str)
+    date_columns.columns = ["Target Year", "Target Month"]
+    target_date = NestedDropdownGroup(
+        date_columns.copy(), title="Select target date", vertical=False
+    )
+
+    # TODO Have those defined as this month - 1
+
     outlier_policy_dropdown_group = NestedDropdownGroup(
         pd.DataFrame(
             {
@@ -34,51 +45,19 @@ def initiate_dropdowns(data_outliers, indicator_group):
         title="Select an outlier correction policy",
     )
 
-    outlier_policy_dropdown_group.dropdown_objects[0].value = DEFAULTS.get(
-        "default_outlier"
-    )
-
     indicator_dropdown_group = NestedDropdownGroup(
         indicator_group, title="Select an indicator"
     )
-
-    indicator_dropdown_group.dropdown_objects[0].value = DEFAULTS.get(
-        "default_indicator_type"
-    )
-    # TODO Link that to default indic
-    indicator_dropdown_group.dropdown_objects[1].value = "EPI"
-    indicator_dropdown_group.dropdown_objects[2].value = DEFAULTS.get(
-        "default_indicator"
-    )
-
-    years = [2018] * 12 + [2019] * 12 + [2020] * 12
-
-    date_columns = pd.DataFrame({"year": years, "month": month_order * 3})
-
-    date_columns.columns = ["Target Year", "Target Month"]
-    target_date = NestedDropdownGroup(
-        date_columns.copy(), title="Select target date", vertical=False
-    )
-
-    # TODO Have those defined as this month - 1
-
-    target_date.dropdown_objects[0].value = DEFAULTS.get("default_target_year")
-    target_date.dropdown_objects[1].value = DEFAULTS.get("default_target_month")
 
     date_columns.columns = ["Reference Year", "Reference Month"]
     reference_date = NestedDropdownGroup(
         date_columns, title="Select reference date", vertical=False
     )
 
-    reference_date.dropdown_objects[0].value = DEFAULTS.get("default_reference_year")
-    reference_date.dropdown_objects[1].value = DEFAULTS.get("default_reference_month")
-
     district_control_group = NestedDropdownGroup(
         data_outliers[["id"]].rename(columns={"id": "Please select a district"}),
         title="Select a district",
     )
-
-    district_control_group.dropdown_objects[0].value = DEFAULTS.get("default_district")
 
     side_nav = SideNav(
         [
@@ -98,3 +77,32 @@ def initiate_dropdowns(data_outliers, indicator_group):
         target_date,
         district_control_group,
     )
+
+
+def set_dropdown_defaults(
+    outlier_policy_dropdown_group,
+    target_date,
+    reference_date,
+    indicator_dropdown_group,
+    district_control_group,
+):
+    outlier_policy_dropdown_group.dropdown_objects[0].value = DEFAULTS.get(
+        "default_outlier"
+    )
+
+    target_date.dropdown_objects[0].value = DEFAULTS.get("default_target_year")
+    target_date.dropdown_objects[1].value = DEFAULTS.get("default_target_month")
+
+    indicator_dropdown_group.dropdown_objects[0].value = DEFAULTS.get(
+        "default_indicator_type"
+    )
+    # TODO Link that to default indic
+    indicator_dropdown_group.dropdown_objects[1].value = "EPI"
+    indicator_dropdown_group.dropdown_objects[2].value = DEFAULTS.get(
+        "default_indicator"
+    )
+
+    reference_date.dropdown_objects[0].value = DEFAULTS.get("default_reference_year")
+    reference_date.dropdown_objects[1].value = DEFAULTS.get("default_reference_month")
+
+    district_control_group.dropdown_objects[0].value = DEFAULTS.get("default_district")
