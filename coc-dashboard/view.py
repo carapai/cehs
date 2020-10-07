@@ -8,7 +8,6 @@ import dash_auth
 import dash_core_components as dcc
 import geopandas as gpd
 import pandas as pd
-from dotenv import find_dotenv, load_dotenv
 
 from store import define_datasets
 from dropdown import initiate_dropdowns
@@ -41,12 +40,11 @@ from components import (
 )
 
 
-load_dotenv(find_dotenv())
-
 download_button = Datadownload()
 
 
-methodology_layout = MethodologySection(title="Methodology", data=meth_data(meth_date))
+methodology_layout = MethodologySection(
+    title="Methodology", data=meth_data(meth_date))
 methodology = Methodology([methodology_layout])
 
 
