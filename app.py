@@ -16,13 +16,11 @@ from view import ds  # NOQA: E402
 
 server = ds.app.server
 
-
 ds._define_callbacks()
 define_callbacks(ds)
 ds._set_layout()
 
 if __name__ == "__main__":
-    ds.run(dev=False)
+    ds.run(dev=True)
 else:
     ds.set_layout_and_callbacks()
-
