@@ -21,6 +21,7 @@ body {
     text-align: left;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 2em;
     overflow: auto;
 }
 
@@ -98,4 +99,59 @@ body {
 
 .card-facility{
     background: #cad9e5;
+}
+
+
+/* Add a black background color to the top navigation */
+#topnav-container {
+    width: 100vw;
+    z-index: 999;
+    position: fixed;
+    background-color: #333;
+    top:0;
+    left:0;
+}
+
+.topnav {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    height: 3.3em;
+}
+
+/* Style the links inside the navigation bar */
+.nav-element {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.topnav button {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    margin: 0.35em auto;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.nav-element:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+
+/* Right-aligned section inside the top navigation */
+.topnav-right {
+    float: right;
+}
+
+.nav-element.active {
+    background-color: #ddd;
+    color: black;
 }
