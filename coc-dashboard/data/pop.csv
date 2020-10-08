@@ -1,4 +1,4 @@
-district,year,male,female,total,childbearing_age,pregnants,not_pregnant,births,u1,u5,u15,suspect_tb
+id,year,male,female,total,childbearing_age,pregnants,not_pregnant,births,u1,u5,u15,suspect_tb
 ABIM,2015,55200,58200,113400,26082,5670,20412,5499.9,4876.2,22906.8,52164,340.2
 ABIM,2016,58900,61800,120700,27761,6035,21726,5853.95,5190.1,24381.4,55522,362.1
 ABIM,2017,62700,65500,128200,29486,6410,23076,6217.7,5512.6,25896.4,58972,384.6
