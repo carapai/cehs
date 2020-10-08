@@ -7,7 +7,6 @@ import dash_auth
 import dash_core_components as dcc
 import geopandas as gpd
 import pandas as pd
-from dotenv import find_dotenv, load_dotenv
 
 import store
 
@@ -39,10 +38,7 @@ from package.components.nested_dropdown_group import NestedDropdownGroup
 from package.layout.data_story import DataStory
 
 
-load_dotenv(find_dotenv())
-
 download_button = Datadownload()
-
 
 ##############
 #   LAYOUT   #
