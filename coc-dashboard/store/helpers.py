@@ -19,7 +19,8 @@ month_order = [
     "Dec",
 ]
 
-index_base_columns = ["id", "date", "year", "month", "facility_id", "facility_name"]
+index_base_columns = ["id", "date", "year",
+                      "month", "facility_id", "facility_name"]
 
 
 # Filtering methods for data transform functions
@@ -134,18 +135,19 @@ def reporting_count_transform(data):
 # Data cleaning methods for dataset selection and callbacks
 
 
-def parse_target_pop(df, indicator):
-    new = []
-    for x in df.index:
-        y = df.loc[x, "ages"]
-        z = y.split(" ")
-        new.append(z)
-    df["age_list"] = new
-    df = df[df.indicator == indicator]
-    sex = df["sex"][0]
-    ages = df["age_list"][0]
-    # TODO Modify to accout for more than 1 line in teh file
-    return sex, ages
+# def parse_target_pop(df, indicator):
+#     new = []
+#     for x in df.index:
+#         y = df.loc[x, "ages"]
+#         z = y.split(" ")
+#         new.append(z)
+#     df["age_list"] = new
+#     df = df[df.indicator == indicator]
+#     sex = df["sex"][0]
+#     ages = df["age_list"][0]
+#     # TODO Modify to accout for more than 1 line in teh file
+#     # TODO : Deete as it is now outdated
+#     return sex, ages
 
 
 def get_percentage(df, pop, pop_tgt, ind_type, indicator, all_country=False):
@@ -155,13 +157,11 @@ def get_percentage(df, pop, pop_tgt, ind_type, indicator, all_country=False):
 
     # Pick what to grouby and index on : either district level or national level
 
-    merge_pop = ["district", "year"]
-    merge_data = ["id", "year"]
+    merge = ["id", "year"]
     index = ["id", "year", "month", "date"]
 
     if all_country == True:
-        merge_pop = merge_pop[1]
-        merge_data = merge_data[1]
+        merge = merge[1:]
         index = index[1:4]
 
     # Return the data as is, with a simple grouby if we are showing absolute numbers
@@ -171,25 +171,27 @@ def get_percentage(df, pop, pop_tgt, ind_type, indicator, all_country=False):
 
     # Else get target population, merge it and calculate percentage
 
-    sex, ages = parse_target_pop(pop_tgt, indicator)
+    elif ind_type == 'Percentage':
 
-    val_col = df.columns[-1]
-    data_in = df.groupby(index, as_index=False).sum()
+        target = pop_tgt[pop_tgt.indicator == indicator]['cat'][0]
+        val_col = df.columns[-1]
 
-    pop_in = pop[pop.age.isin(ages)].groupby(merge_pop, as_index=False).sum()
-    data_in = pd.merge(
-        data_in, pop_in, how="left", left_on=merge_data, right_on=merge_pop
-    )
+        columns = merge + [target]
 
-    data_in = data_in.groupby(index, as_index=False).sum()
+        pop_in = pop[columns].groupby(merge, as_index=False).sum()
 
-    data_in[val_col] = (data_in[val_col] / data_in[sex]) * 12
+        data_in = df.groupby(index, as_index=False).sum()
 
-    data_in.replace(np.inf, np.nan, inplace=True)
+        data_in = pd.merge(data_in, pop_in,
+                           how="left", left_on=merge, right_on=merge)
 
-    data_in = data_in.set_index(index)[[val_col]]
+        data_in[val_col] = (data_in[val_col] / data_in[target]) * 12
 
-    return data_in
+        data_in.replace(np.inf, np.nan, inplace=True)
+
+        data_out = data_in.set_index(index)[[val_col]]
+
+        return data_out
 
 
 def check_index(

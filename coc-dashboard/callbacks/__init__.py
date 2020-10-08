@@ -112,7 +112,7 @@ def define_callbacks(ds):
     print("==Registering callbacks==")
 
     for callback in callbacks:
-        print(callback)
+        # print(callback)
         app.callback(
             output=callback.get("outputs", []),
             inputs=callback.get("inputs", []),
