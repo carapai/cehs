@@ -16,7 +16,6 @@ from view import ds  # NOQA: E402
 
 server = ds.app.server
 
-
 ds._define_callbacks()
 define_callbacks(ds)
 ds._set_layout()
