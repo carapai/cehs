@@ -8,6 +8,7 @@ from .static_info import *
 import os
 from dropdown import initiate_dropdowns, set_dropdown_defaults
 
+
 # READ FROM DATABASE
 
 DATABASE_URI = os.environ["HEROKU_POSTGRESQL_CYAN_URL"]
@@ -75,13 +76,6 @@ for x in os.environ:
         login = x.split("DASH_AUTH_")[1]
         password = os.environ.get(x, os.environ.get("SECRET"))
         credentials[login] = password
-
-# DATE
-
-date_df = pd.read_csv("./coc-dashboard/data/chron_date.csv")
-date_df["Date"] = pd.to_datetime(date_df.Date).dt.strftime("%B-%d-%Y")
-meth_date = date_df["Date"].iloc[-1]
-
 
 # GLOBAL DATASET
 
