@@ -53,16 +53,6 @@ def initiate_dropdowns(data_outliers, indicator_group):
         indicator_group, title="Select an indicator"
     )
 
-
-    years = [2018] * 12 + [2019] * 12 + [2020] * 12
-
-    date_columns = pd.DataFrame({"year": years, "month": month_order * 3})
-
-    date_columns.columns = ["Target Year", "Target Month"]
-    target_date = NestedDropdownGroup(
-        date_columns.copy(), title="Select target date", vertical=False
-    )
-
     # TODO Have those defined as this month - 1
 
     date_columns.columns = ["Reference Year", "Reference Month"]
@@ -70,11 +60,8 @@ def initiate_dropdowns(data_outliers, indicator_group):
         date_columns, title="Select reference date", vertical=False
     )
 
-
-
     district_control_group = NestedDropdownGroup(
-        data_outliers[["id"]].rename(
-            columns={"id": "Please select a district"}),
+        data_outliers[["id"]].rename(columns={"id": "Please select a district"}),
         title="Select a district",
     )
 

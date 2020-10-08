@@ -22,7 +22,5 @@ define_callbacks(ds)
 ds._set_layout()
 
 if __name__ == "__main__":
-    ds.run(dev=False)
-else:
-    ds.set_layout_and_callbacks()
+    ds.app.run_server(debug=True)
 

@@ -37,9 +37,6 @@ from package.components.methodology_section import MethodologySection
 from package.components.nested_dropdown_group import NestedDropdownGroup
 from package.layout.data_story import DataStory
 
-
-download_button = Datadownload()
-
 ##############
 #   LAYOUT   #
 ##############
