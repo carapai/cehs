@@ -50,9 +50,9 @@ def define_callbacks(ds):
         # User interface
         {
             "inputs": [Input("fade-button", "n_clicks")],
-            "outputs": [Output("fade", "is_in")],
+            "outputs": [Output("fade-controls", "is_in")],
             "function": toggle_fade_controls,
-            "states": [State("fade", "is_in")],
+            "states": [State("fade-controls", "is_in")],
         },
         {
             "inputs": [
