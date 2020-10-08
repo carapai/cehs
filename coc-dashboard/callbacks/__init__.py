@@ -55,25 +55,28 @@ def define_callbacks(ds):
             "states": [State("fade", "is_in")],
         },
         {
-            "inputs": [Input("fade-button2", "n_clicks")],
-            "outputs": [Output("fade2", "is_in")],
+            "inputs": [
+                Input("info-button", "n_clicks"),
+                Input("info-close", "n_clicks"),
+            ],
+            "outputs": [Output("info-fade", "is_open")],
             "function": toggle_fade_info,
-            "states": [State("fade2", "is_in")],
+            "states": [State("info-fade", "is_open")],
         },
-        {
-            "inputs": [Input("download-excel", "n_clicks")],
-            "outputs": [Output("download-excel", "href")],
-            "function": download_data,
-        },
+        # {
+        #     "inputs": [Input("download-excel", "n_clicks")],
+        #     "outputs": [Output("download-excel", "href")],
+        #     "function": download_data,
+        # },
         {
             "inputs": [
-                Input("dashboard-button", "n_clicks"),
-                Input("reporting-button", "n_clicks"),
-                Input("overview-button", "n_clicks"),
+                Input("trends", "n_clicks"),
+                Input("reporting", "n_clicks"),
+                Input("overview", "n_clicks"),
             ],
             "outputs": [
                 Output("ds-paginator", "children"),
-                Output("paginator", "children"),
+                Output("nav-buttons", "children"),
             ],
             "function": change_page,
         },
