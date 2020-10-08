@@ -103,4 +103,4 @@ class Navbar:
         return html_nav
 
     def _requires_dropdown(self):
-        return False
+        return True
