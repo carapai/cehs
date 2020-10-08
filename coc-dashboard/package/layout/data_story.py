@@ -61,7 +61,7 @@ class DataStory(Dashboard):
                             rel="stylesheet",
                         ),
                         html.Link(
-                            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
+                            href="https://fonts.googleapis.com/icon?family=Material+Icons",
                             rel="stylesheet",
                         ),
                         dcc.Location(id="url", refresh=False),

@@ -58,11 +58,12 @@ class Navbar:
                     [
                         dbc.Button("Controls", id="fade-button"),
                         html.P(
-                            html.I(className="glyphicon glyphicon-download"),
+                            html.Span("cloud_download", className="material-icons"),
                             className="nav-element",
                         ),
                         html.P(
-                            html.I(className="glyphicon glyphicon-info-sign"),
+                            html.Span("info", className="material-icons"),
+                            # html.I(className="fas fa-info-circle"),
                             className="nav-element",
                             id="info-button",
                         ),
@@ -71,7 +72,7 @@ class Navbar:
                 ),
                 dbc.Fade(
                     el_layout,
-                    id="fade",
+                    id="fade-controls",
                     is_in=False,
                     style={
                         "position": "fixed",
@@ -82,7 +83,7 @@ class Navbar:
                         "width": "25vw",
                         "overflow": "visible",
                     },
-                    className="shadow-sm rounded",
+                    className="shadow-sm",
                 ),
                 dbc.Modal(
                     [
