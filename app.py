@@ -3,7 +3,9 @@
 
 
 import sys
+
 from dotenv import find_dotenv, load_dotenv
+
 
 load_dotenv(find_dotenv())
 
@@ -15,9 +17,12 @@ from view import ds  # NOQA: E402
 server = ds.app.server
 
 
+ds._define_callbacks()
 define_callbacks(ds)
+ds._set_layout()
 
 if __name__ == "__main__":
     ds.run(dev=False)
 else:
     ds.set_layout_and_callbacks()
+

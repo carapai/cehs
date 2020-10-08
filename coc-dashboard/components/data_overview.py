@@ -52,8 +52,6 @@ def statistics_transform(data):
         "avg_tb": avg_tb,
     }
 
-    print(data_out)
-
     return data_out
 
 
