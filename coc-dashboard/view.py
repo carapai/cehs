@@ -17,8 +17,6 @@ from store import (
     define_datasets,
     download_file,
     indicator_group,
-    meth_data,
-    meth_date,
     month_order,
     side_nav,
     static,
@@ -35,7 +33,7 @@ from components import (
     tree_map_district,
 )
 
-from model import CardLayout, Datadownload, Methodology, Paginator
+from model import CardLayout, Datadownload
 from package.components.methodology_section import MethodologySection
 from package.components.nested_dropdown_group import NestedDropdownGroup
 from package.layout.data_story import DataStory
@@ -46,15 +44,9 @@ load_dotenv(find_dotenv())
 download_button = Datadownload()
 
 
-methodology_layout = MethodologySection(title="Methodology", data=meth_data(meth_date))
-methodology = Methodology([methodology_layout])
-
-
 ##############
 #   LAYOUT   #
 ##############
-
-paginator = Paginator()
 
 ds = DataStory(
     data_cards=[
@@ -64,7 +56,7 @@ ds = DataStory(
         tree_map_district,
         facility_scatter,
     ],
-    ind_elements=[side_nav, download_button, methodology, paginator],
+    ind_elements=[side_nav],
     footer_image="/static/images/UNICEF-MOH-bottom-resized.jpg",
     title="Continuity of Essential Health Services",
     sub_title="Overview of country, district and health facility-level health services in Uganda",

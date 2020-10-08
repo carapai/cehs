@@ -60,6 +60,10 @@ class DataStory(Dashboard):
                             href="https://fonts.googleapis.com/css2?family=Lato&display=swap",
                             rel="stylesheet",
                         ),
+                        html.Link(
+                            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
+                            rel="stylesheet",
+                        ),
                         dcc.Location(id="url", refresh=False),
                     ],
                     id="meta",

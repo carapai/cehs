@@ -1,7 +1,8 @@
 import pandas as pd
-from model import SideNav
+from model import Navbar
 
 from store.helpers import month_order
+from store.static_info import meth_data
 from package.components.nested_dropdown_group import NestedDropdownGroup
 from package.components.methodology_section import MethodologySection
 
@@ -59,14 +60,25 @@ def initiate_dropdowns(data_outliers, indicator_group):
         title="Select a district",
     )
 
-    side_nav = SideNav(
-        [
+    # DATE
+
+    date_df = pd.read_csv("./coc-dashboard/data/chron_date.csv")
+    date_df["Date"] = pd.to_datetime(date_df.Date).dt.strftime("%B-%d-%Y")
+    meth_date = date_df["Date"].iloc[-1]
+
+    methodology_layout = MethodologySection(
+        title="Methodology", data=meth_data(meth_date)
+    )
+
+    side_nav = Navbar(
+        elements=[
             outlier_policy_dropdown_group,
             indicator_dropdown_group,
             reference_date,
             target_date,
             district_control_group,
-        ]
+        ],
+        methodology=[methodology_layout],
     )
 
     return (
