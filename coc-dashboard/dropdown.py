@@ -114,8 +114,8 @@ def set_dropdown_defaults(
         "default_indicator_type"
     )
     # TODO Link that to default indic
-    indicator_dropdown_group.dropdown_objects[1].value = "EPI"
-    indicator_dropdown_group.dropdown_objects[2].value = DEFAULTS.get(
+    indicator_dropdown_group.dropdown_objects[0].value = "EPI"
+    indicator_dropdown_group.dropdown_objects[1].value = DEFAULTS.get(
         "default_indicator"
     )
 
