@@ -1,6 +1,6 @@
 from dash import callback_context
 from store import download_file, dfs, timeit
-from view import ds, paginator
+from view import ds, side_nav
 from components import (
     country_overview_scatter,
     country_overview,
@@ -25,12 +25,11 @@ def toggle_fade_controls(n, is_in):
 
 
 @timeit
-def toggle_fade_info(n, is_in):
-    if not n:
-        # Button has never been clickedppy
-        is_in = True
-    out2 = not is_in
-    return [out2]
+def toggle_fade_info(n1, n2, is_open):
+    if n1 or n2:
+        # Button has never been clicked
+        return [not is_open]
+    return [is_open]
 
 
 @timeit
@@ -48,7 +47,9 @@ def download_data(n_clicks):
 def change_page(*inputs):
     changed_id = [p["prop_id"] for p in callback_context.triggered][0]
 
-    if "dashboard-button" in changed_id:
+    clicked = "trends"
+
+    if "trends" in changed_id:
         ds.data_cards = [
             country_overview_scatter,
             country_overview,
@@ -56,16 +57,16 @@ def change_page(*inputs):
             tree_map_district,
             facility_scatter,
         ]
-        paginator.clicked = "Dashboard"
-    elif "reporting-button" in changed_id:
+        clicked = "trends"
+    elif "reporting" in changed_id:
         ds.data_cards = [
             stacked_bar_reporting_country,
             reporting_map,
             stacked_bar_district,
         ]
-        paginator.clicked = "Reporting"
-    elif "overview-button" in changed_id:
+        clicked = "reporting"
+    elif "overview" in changed_id:
         ds.data_cards = [statistics, grid]
-        paginator.clicked = "Overview"
+        clicked = "overview"
 
-    return [ds.get_container(), paginator.get_layout()]
+    return [ds.get_container(), side_nav.get_nav_buttons(clicked)]
