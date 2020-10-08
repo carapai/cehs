@@ -14,7 +14,7 @@ DATABASE_URI = os.environ["HEROKU_POSTGRESQL_CYAN_URL"]
 engine = create_engine(DATABASE_URI)
 
 columns, data_reporting, data_outliers, data_std, data_iqr, indicator_group = read_data(
-    engine, test=False
+    engine, test=True
 )
 
 dfs = {
@@ -26,7 +26,6 @@ dfs = {
 
 for key, df in dfs.items():
     df["date"] = pd.to_datetime(df.date, errors="coerce")
-    df = df.rename(columns=columns)
     dfs[key] = df
 
 # NAVIGATION

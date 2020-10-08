@@ -21,12 +21,13 @@ def scatter_country_data(dfs, static, *, outlier, indicator, indicator_type, **k
 
     df = filter_df_by_policy(dfs, outlier)
 
-    df = filter_df_by_indicator(df, indicator, persist_columns=index_base_columns)
+    df = filter_df_by_indicator(
+        df, indicator, persist_columns=index_base_columns)
 
-    df_country = get_national_sum(df, indicator)
+    # df_country = get_national_sum(df, indicator) (already done in get_perc)
 
     df_country = get_percentage(
-        df_country,
+        df,
         static.get("population data"),
         static.get("target population type"),
         indicator_type,
@@ -56,7 +57,8 @@ def map_bar_country_dated_data(
 
     df = filter_df_by_policy(dfs, outlier)
 
-    df = filter_df_by_indicator(df, indicator, persist_columns=index_base_columns)
+    df = filter_df_by_indicator(
+        df, indicator, persist_columns=index_base_columns)
 
     data_in = filter_df_by_dates(
         df, target_year, target_month, reference_year, reference_month
@@ -75,7 +77,8 @@ def map_bar_country_dated_data(
     # TODO updat teh filter by data function so that this step is no longer needed
 
     mask = (
-        (data_in.year == int(reference_year)) & (data_in.month == reference_month)
+        (data_in.year == int(reference_year)) & (
+            data_in.month == reference_month)
     ) | ((data_in.year == int(target_year)) & (data_in.month == target_month))
 
     data_in = data_in[mask]
@@ -108,7 +111,8 @@ def scatter_district_data(
 ):
     df = filter_df_by_policy(dfs, outlier)
 
-    df = filter_df_by_indicator(df, indicator, persist_columns=index_base_columns)
+    df = filter_df_by_indicator(
+        df, indicator, persist_columns=index_base_columns)
 
     df_district = filter_by_district(df, district)
     df_district = get_district_sum(df_district, indicator)
@@ -142,7 +146,8 @@ def tree_map_district_dated_data(
 
     df = filter_df_by_policy(dfs, outlier)
 
-    df = filter_df_by_indicator(df, indicator, persist_columns=index_base_columns)
+    df = filter_df_by_indicator(
+        df, indicator, persist_columns=index_base_columns)
 
     # TODO check how the date function works such that it shows only target date
 
@@ -161,7 +166,8 @@ def scatter_facility_data(
 
     df = filter_df_by_policy(dfs, outlier)
 
-    df = filter_df_by_indicator(df, indicator, persist_columns=index_base_columns)
+    df = filter_df_by_indicator(
+        df, indicator, persist_columns=index_base_columns)
 
     df_facility = filter_by_district(df, district)
 
@@ -258,20 +264,18 @@ def indicator_group(dfs, static, *, indicator_group, outlier, **kwargs):
             "Newborn deaths",
             "Postnatal Visits",
         ],
-        EPI=[
-            "BCG",
-            "DPT1",
-            "DPT3",
-            "HPV1",
-            "HPV2",
-            "MR1",
-            "PCV1",
-            "PCV3",
-            "TD1",
-            "TD2",
-            "TD3",
-            "TD4-5",
-        ],
+        EPI=['BCG (all)', 'BCG (outreach)', 'BCG (static)',
+             'DPT1 (all)', 'DPT1 (outreach)', 'DPT1 (static)',
+             'DPT3 (all)', 'DPT3 (outreach)', 'DPT3 (static)',
+             'HPV1 (all)', 'HPV1 (community)', 'HPV1 (school)',
+             'HPV2 (all)', 'HPV2 (community)', 'HPV2 (school)',
+             'MR1 (all)', 'MR1 (outreach)', 'MR1 (static)',
+             'PCV1 (all)', 'PCV1 (outreach)', 'PCV1 (static)',
+             'PCV3 (all)', 'PCV3 (outreach)', 'PCV3 (static)',
+             'TD1 (nonpregnant)', 'TD1 (pregnant)',
+             'TD2 (nonpregnant)', 'TD2 (pregnant)',
+             'TD3 (nonpregnant)', 'TD3 (pregnant)',
+             'TD4-5 (nonpregnant)', 'TD4-5 (pregnant)'],
         GENERAL=["OPD attendance", "IPD attendance"],
         HIV=[
             "Tested HIV",

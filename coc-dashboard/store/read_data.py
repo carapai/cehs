@@ -6,17 +6,17 @@ import geopandas as gpd
 def read_data(engine, test=False):
 
     columns_mapping_file = "./coc-dashboard/data/columns.csv"
-    data_outliers_file = "./coc-dashboard/data/outliers.csv"
-    data_reporting_file = "./coc-dashboard/data/reporting.csv"
-    data_std_file = "./coc-dashboard/data/std.csv"
-    data_iqr_file = "./coc-dashboard/data/iqr.csv"
+    data_outliers_file = "./coc-dashboard/data/outlier_data.csv"
+    data_reporting_file = "./coc-dashboard/data/report_data.csv"
+    data_std_file = "./coc-dashboard/data/std_no_outlier_data.csv"
+    data_iqr_file = "./coc-dashboard/data/iqr_no_outlier_data.csv"
     indicator_group_file = "./coc-dashboard/data/groups.csv"
 
     # TODO delete references to test
     if test == False:
         try:
             columns = {
-                x.get("new"): x.get("old")
+                x.get("old"): x.get("new")
                 for x in pd.read_sql(
                     "SELECT new, old FROM columns_index;", con=engine
                 ).to_dict("records")
@@ -60,24 +60,30 @@ def read_data(engine, test=False):
             print(e)
             columns = {
                 x.get("new"): x.get("old")
-                for x in pd.read_csv(columns_mapping_file).to_dict("records")
+                for x in pd.read_csv(columns_mapping_file)[['old', 'new']].to_dict("records")
             }
             data_reporting = pd.read_csv(data_reporting_file)
             data_outliers = pd.read_csv(data_outliers_file)
             data_std = pd.read_csv(data_std_file)
             data_iqr = pd.read_csv(data_iqr_file)
             indicator_group = pd.read_csv(indicator_group_file)
+
         # TODO Need to export the result of this to csv back up if next run fails, and print a warning message when this happens
 
     else:
         columns = {
-            x.get("new"): x.get("old")
-            for x in pd.read_csv(columns_mapping_file).to_dict("records")
+            x.get("old"): x.get("new")
+            for x in pd.read_csv(columns_mapping_file)[['old', 'new']].to_dict("records")
         }
         data_reporting = pd.read_csv(data_reporting_file)
         data_outliers = pd.read_csv(data_outliers_file)
         data_std = pd.read_csv(data_std_file)
         data_iqr = pd.read_csv(data_iqr_file)
         indicator_group = pd.read_csv(indicator_group_file)
+
+    data_reporting = data_reporting.rename(columns=columns)
+    data_outliers = data_outliers.rename(columns=columns)
+    data_std = data_std.rename(columns=columns)
+    data_iqr = data_iqr.rename(columns=columns)
 
     return columns, data_reporting, data_outliers, data_std, data_iqr, indicator_group
