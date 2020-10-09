@@ -39,7 +39,7 @@ class Navbar:
             html.P(
                 "Overview",
                 id="overview",
-                className=active_style if active == "overview" else "nav-element",
+                className="nav-element disabled",  # active_style if active == "overview" else "nav-element",
             ),
         ]
 
