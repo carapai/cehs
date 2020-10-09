@@ -15,7 +15,7 @@ DATABASE_URI = os.environ["HEROKU_POSTGRESQL_CYAN_URL"]
 engine = create_engine(DATABASE_URI)
 
 columns, data_reporting, data_outliers, data_std, data_iqr, indicator_group = read_data(
-    engine, test=False
+    engine, test=True
 )
 
 dfs = {
@@ -50,15 +50,15 @@ set_dropdown_defaults(
 
 CONTROLS = dict(
     outlier=outlier_policy_dropdown_group.dropdown_objects[0].value,
-    indicator=indicator_dropdown_group.dropdown_objects[2].value,
-    indicator_type=indicator_dropdown_group.dropdown_objects[0].value,
+    indicator=indicator_dropdown_group.dropdown_objects[-1].value,
+    # indicator_type=indicator_dropdown_group.dropdown_objects[0].value,
     district=district_control_group.dropdown_objects[0].value,
     target_year=target_date.dropdown_objects[0].value,
     target_month=target_date.dropdown_objects[1].value,
     reference_year=reference_date.dropdown_objects[0].value,
     reference_month=reference_date.dropdown_objects[1].value,
     facility=None,
-    indicator_group=indicator_dropdown_group.dropdown_objects[1].value,
+    indicator_group=indicator_dropdown_group.dropdown_objects[0].value,
 )
 
 print("Init control dict")

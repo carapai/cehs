@@ -38,7 +38,7 @@ callback_ids = {
     target_date.dropdown_ids[-1]: "value",
     district_control_group.dropdown_ids[-1]: "value",
     indicator_dropdown_group.dropdown_ids[0]: "value",
-    indicator_dropdown_group.dropdown_ids[1]: "value",
+    # indicator_dropdown_group.dropdown_ids[1]: "value", #DELDIS
 }
 
 
