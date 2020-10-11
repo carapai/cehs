@@ -175,7 +175,7 @@ def get_percentage(df, pop, pop_tgt, indicator_group, indicator, all_country=Fal
 
     elif ind_type == "coverage":
 
-        target = pop_tgt[pop_tgt.indicator == indicator]['cat'][0]
+        target = pop_tgt[pop_tgt.indicator == indicator]['cat'].values[0]
         val_col = df.columns[-1]
 
         columns = merge + [target]
