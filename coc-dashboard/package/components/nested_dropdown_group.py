@@ -78,7 +78,8 @@ class NestedDropdownGroup:
                 if self.title
                 else None
             ]
-            + self.get_orientation(self.dropdown_objects, vertical=self.vertical),
+            + self.get_orientation(self.dropdown_objects,
+                                   vertical=self.vertical),
             className="p-3 m-12",
         )
         return layout
@@ -88,7 +89,8 @@ class NestedDropdownGroup:
 
     def get_orientation(self, elements, vertical=True):
         elements = [e.get_layout() for e in elements]
-        layout = [dbc.Row(e) for e in elements] if vertical else [dbc.Row(elements)]
+        layout = [dbc.Row(e) for e in elements] if vertical else [
+            dbc.Row(elements)]
         return layout
 
     @timeit

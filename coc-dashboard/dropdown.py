@@ -14,7 +14,7 @@ load_dotenv(find_dotenv())
 DEFAULTS = {
     "default_outlier": os.environ["OUTLIER"],
     "default_indicator": os.environ["INDICATOR"],
-    # "default_indicator_type": os.environ["INDICATOR_TYPE"],
+    "default_indicator_group": os.environ["INDICATOR_GROUP"],
     "default_district": os.environ["DISTRICT"],
     "default_target_year": os.environ["TARGET_YEAR"],
     "default_target_month": os.environ["TARGET_MONTH"],
@@ -34,7 +34,7 @@ def initiate_dropdowns(data_outliers, indicator_group):
         date_columns.copy(), title="Select target date", vertical=False
     )
 
-    # TODO Have those defined as this month - 1
+    # TODO Only show data up to today > Use input to find max date
 
     outlier_policy_dropdown_group = NestedDropdownGroup(
         pd.DataFrame(
@@ -112,11 +112,8 @@ def set_dropdown_defaults(
     target_date.dropdown_objects[1].value = DEFAULTS.get(
         "default_target_month")
 
-    # indicator_dropdown_group.dropdown_objects[0].value = DEFAULTS.get(
-    #     "default_indicator_type"
-    # )
-    # TODO Link that to default indic
-    indicator_dropdown_group.dropdown_objects[0].value = "EPI"
+    indicator_dropdown_group.dropdown_objects[0].value = DEFAULTS.get(
+        "default_indicator_group")
     indicator_dropdown_group.dropdown_objects[1].value = DEFAULTS.get(
         "default_indicator"
     )
