@@ -15,6 +15,7 @@ load_dotenv(find_dotenv())
 DEFAULTS = {
     "default_outlier": os.environ["OUTLIER"],
     "default_indicator": os.environ["INDICATOR"],
+    "default_indicator_group": os.environ["INDICATOR_GROUP"],
     "default_district": os.environ["DISTRICT"],
     "default_target_year": os.environ["TARGET_YEAR"],
     "default_target_month": os.environ["TARGET_MONTH"],
@@ -27,16 +28,18 @@ def initiate_dropdowns():
 
     db = Database()
 
-    years = [2018] * 12 + [2019] * 12 + [2020] * 12
+    # TODO make that sustainable for beyond 2020
 
-    date_columns = pd.DataFrame({"year": years, "month": month_order * 3})
+    years = [2018] * 12 + [2019] * 12 + [2020] * 8
+
+    date_columns = pd.DataFrame(
+        {"year": years, "month": month_order * 2 + month_order[:8]}
+    )
     date_columns.year = date_columns.year.astype(str)
     date_columns.columns = ["Target Year", "Target Month"]
     target_date = NestedDropdownGroup(
         date_columns.copy(), title="Select target date", vertical=False
     )
-
-    # TODO Have those defined as this month - 1
 
     outlier_policy_dropdown_group = NestedDropdownGroup(
         pd.DataFrame(
@@ -68,8 +71,7 @@ def initiate_dropdowns():
     )
 
     methodology_layout = MethodologySection(
-        title="Methodology",
-        data=meth_data(db.fetch_date)
+        title="Methodology", data=meth_data(db.fetch_date)
     )
 
     side_nav = Navbar(
@@ -107,8 +109,9 @@ def set_dropdown_defaults(
     target_date.dropdown_objects[0].value = DEFAULTS.get("default_target_year")
     target_date.dropdown_objects[1].value = DEFAULTS.get("default_target_month")
 
-    # TODO Link that to default indic
-    indicator_dropdown_group.dropdown_objects[0].value = "EPI"
+    indicator_dropdown_group.dropdown_objects[0].value = DEFAULTS.get(
+        "default_indicator_group"
+    )
     indicator_dropdown_group.dropdown_objects[1].value = DEFAULTS.get(
         "default_indicator"
     )
