@@ -3,6 +3,7 @@ from model import Navbar
 
 from store.helpers import month_order
 from store.static_info import meth_data
+from .database import Database
 from package.components.nested_dropdown_group import NestedDropdownGroup
 from package.components.methodology_section import MethodologySection
 
@@ -14,7 +15,6 @@ load_dotenv(find_dotenv())
 DEFAULTS = {
     "default_outlier": os.environ["OUTLIER"],
     "default_indicator": os.environ["INDICATOR"],
-    "default_indicator_type": os.environ["INDICATOR_TYPE"],
     "default_district": os.environ["DISTRICT"],
     "default_target_year": os.environ["TARGET_YEAR"],
     "default_target_month": os.environ["TARGET_MONTH"],
@@ -23,7 +23,9 @@ DEFAULTS = {
 }
 
 
-def initiate_dropdowns(data_outliers, indicator_group):
+def initiate_dropdowns():
+
+    db = Database()
 
     years = [2018] * 12 + [2019] * 12 + [2020] * 12
 
@@ -50,7 +52,7 @@ def initiate_dropdowns(data_outliers, indicator_group):
     )
 
     indicator_dropdown_group = NestedDropdownGroup(
-        indicator_group, title="Select an indicator"
+        db.indicator_dropdowns, title="Select an indicator"
     )
 
     # TODO Have those defined as this month - 1
@@ -61,18 +63,13 @@ def initiate_dropdowns(data_outliers, indicator_group):
     )
 
     district_control_group = NestedDropdownGroup(
-        data_outliers[["id"]].rename(columns={"id": "Please select a district"}),
+        pd.DataFrame({"Please select a district": db.districts}),
         title="Select a district",
     )
 
-    # DATE
-
-    date_df = pd.read_csv("./coc-dashboard/data/chron_date.csv")
-    date_df["Date"] = pd.to_datetime(date_df.Date).dt.strftime("%B-%d-%Y")
-    meth_date = date_df["Date"].iloc[-1]
-
     methodology_layout = MethodologySection(
-        title="Methodology", data=meth_data(meth_date)
+        title="Methodology",
+        data=meth_data(db.fetch_date)
     )
 
     side_nav = Navbar(
@@ -110,12 +107,9 @@ def set_dropdown_defaults(
     target_date.dropdown_objects[0].value = DEFAULTS.get("default_target_year")
     target_date.dropdown_objects[1].value = DEFAULTS.get("default_target_month")
 
-    indicator_dropdown_group.dropdown_objects[0].value = DEFAULTS.get(
-        "default_indicator_type"
-    )
     # TODO Link that to default indic
-    indicator_dropdown_group.dropdown_objects[1].value = "EPI"
-    indicator_dropdown_group.dropdown_objects[2].value = DEFAULTS.get(
+    indicator_dropdown_group.dropdown_objects[0].value = "EPI"
+    indicator_dropdown_group.dropdown_objects[1].value = DEFAULTS.get(
         "default_indicator"
     )
 
