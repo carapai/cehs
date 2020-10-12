@@ -17,7 +17,7 @@ import pandas as pd
 # CARD 1
 
 
-def scatter_country_data(*, outlier, indicator, **kwargs):
+def scatter_country_data(*, outlier, indicator, indicator_group, **kwargs):
 
     # dfs, static,
 
@@ -35,6 +35,7 @@ def scatter_country_data(*, outlier, indicator, **kwargs):
         df,
         static.get("population data"),
         static.get("target population type"),
+        indicator_group,
         indicator,
         all_country=True,
     )
@@ -49,6 +50,7 @@ def map_bar_country_dated_data(
     *,
     outlier,
     indicator,
+    indicator_group,
     target_year,
     target_month,
     reference_year,
@@ -72,6 +74,7 @@ def map_bar_country_dated_data(
         data_in,
         static.get("population data"),
         static.get("target population type"),
+        indicator_group,
         indicator,
     )
 
@@ -108,7 +111,7 @@ def map_bar_country_dated_data(
 # CARD 3
 
 
-def scatter_district_data(*, outlier, indicator, district, **kwargs):
+def scatter_district_data(*, outlier, indicator, indicator_group, district, **kwargs):
 
     db = Database()
 
@@ -124,6 +127,7 @@ def scatter_district_data(*, outlier, indicator, district, **kwargs):
         df_district,
         static.get("population data"),
         static.get("target population type"),
+        indicator_group,
         indicator,
     )
 
