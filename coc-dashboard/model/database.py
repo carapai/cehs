@@ -110,6 +110,7 @@ class Repository(Base):
             "value_raw": self.value_raw,
             "value_iqr": self.value_iqr,
             "value_std": self.value_std,
+            "value_rep": self.value_rep,
         }
 
         return serializeable
