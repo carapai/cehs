@@ -19,8 +19,6 @@ month_order = [
     "Dec",
 ]
 
-index_base_columns = ["id", "date", "year", "month", "facility_id", "facility_name"]
-
 
 # Filtering methods for data transform functions
 
@@ -143,7 +141,6 @@ def get_percentage(df, pop, pop_tgt, indicator_group, indicator, all_country=Fal
     """
 
     # Pick what to grouby and index on : either district level or national level
-
     merge = ["id", "year"]
     index = ["id", "year", "month", "date"]
 
@@ -182,9 +179,7 @@ def get_percentage(df, pop, pop_tgt, indicator_group, indicator, all_country=Fal
         return data_out
 
 
-def check_index(
-    df, index=["id", "date", "year", "month", "facility_id", "facility_name"]
-):
+def check_index(df, index=["id", "date", "year", "month", "facility_name"]):
     """
     Check that the dataframe is formatted in the expected way, with expected indexes. Restructure the dataframe (set the indices) if this is not the case.
     """

@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from model.database import Repository, FetchDate, Population, PopulationTarget
@@ -47,6 +48,8 @@ class Database(metaclass=SingletonMeta):
         "value_std": float,
     }
 
+    index_columns = ["id", "facility_name", "date", "year", "month"]
+
     datasets = {}
 
     init = False
@@ -78,44 +81,74 @@ class Database(metaclass=SingletonMeta):
 
             for col in self.__dataframe.columns:
                 if col in self.data_types.keys():
+                    print(f"Convering {col}")
                     self.__dataframe[col] = self.__dataframe[col].astype(
                         self.data_types.get(col)
                     )
+
+            self.__dataframe["year"] = self.__dataframe.date.apply(lambda x: x.year)
+            months = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+            ]
+            self.__dataframe["month"] = self.__dataframe.date.apply(
+                lambda x: months[x.month - 1]
+            )
+
+            self.__dataframe.rename(columns={"district_name": "id"}, inplace=True)
 
         return self.__dataframe
 
     @property
     def data_raw(self):
         return self.dataframe[
-            ["district_name", "facility_name", "date", "indicator_name", "value_raw"]
+            self.index_columns + ["indicator_name", "value_raw"]
         ].copy()
 
     @property
     def data_iqr(self):
         return self.dataframe[
-            ["district_name", "facility_name", "date", "indicator_name", "value_iqr"]
+            self.index_columns + ["indicator_name", "value_iqr"]
         ].copy()
 
     @property
     def data_std(self):
         return self.dataframe[
-            ["district_name", "facility_name", "date", "indicator_name", "value_std"]
+            self.index_columns + ["indicator_name", "value_std"]
         ].copy()
 
     @property
     def data_rep(self):
         return self.dataframe[
-            ["district_name", "facility_name", "date", "indicator_name", "value_rep"]
+            self.index_columns + ["indicator_name", "value_rep"]
         ].copy()
 
-    def pivot(self, df):
-        index = ["district_name", "facility_name", "date"]
-        return pd.pivot_table(df, index=index, columns="indicator_name")
+    def pivot_single(self, df):
+        indicator_name = df.indicator_name[0]
+        df = df[self.index_columns + [df.columns[-1]]].rename(
+            columns={df.columns[-1]: indicator_name}
+        )
+        # df = pd.pivot_table(
+        #     df, index=self.index_columns, columns="indicator_name", aggfunc="first"
+        # )
+        # df.columns = df.columns.droplevel(0)
+        # df = df.reset_index()
+        return df
 
     @property
     def districts(self):
         if len(self.__districts) < 1:
-            self.__districts = self.dataframe.district_name.unique().tolist()
+            self.__districts = self.dataframe.id.unique().tolist()
         return self.__districts
 
     @property

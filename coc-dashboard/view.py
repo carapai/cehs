@@ -12,12 +12,7 @@ import store
 
 from store import (
     credentials,
-    data_outliers,
-    download_file,
-    indicator_group,
-    month_order,
     side_nav,
-    static,
 )
 
 from components import (
@@ -25,15 +20,9 @@ from components import (
     country_overview_scatter,
     district_overview_scatter,
     facility_scatter,
-    reporting_map,
-    stacked_bar_district,
-    stacked_bar_reporting_country,
     tree_map_district,
 )
 
-from model import CardLayout, Datadownload
-from package.components.methodology_section import MethodologySection
-from package.components.nested_dropdown_group import NestedDropdownGroup
 from package.layout.data_story import DataStory
 
 ##############

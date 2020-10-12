@@ -1,5 +1,5 @@
 from dash import callback_context
-from store import download_file, dfs, timeit
+from store import download_file, timeit
 from view import ds, side_nav
 from components import (
     country_overview_scatter,
@@ -10,8 +10,8 @@ from components import (
     stacked_bar_reporting_country,
     tree_map_district,
     reporting_map,
-    grid,
-    statistics,
+    # grid,
+    # statistics,
 )
 
 
@@ -65,8 +65,8 @@ def change_page(*inputs):
             stacked_bar_district,
         ]
         clicked = "reporting"
-    elif "overview" in changed_id:
-        ds.data_cards = [statistics, grid]
-        clicked = "overview"
+    # elif "overview" in changed_id:
+    #     ds.data_cards = [statistics, grid]
+    #     clicked = "overview"
 
     return [ds.get_container(), side_nav.get_nav_buttons(clicked)]

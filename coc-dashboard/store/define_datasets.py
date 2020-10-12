@@ -20,7 +20,7 @@ from .cards_mutations import (
 
 # TODO find a smart way to iterate through imports rather than repeatthe list manually
 
-#args = ip.getfullargspec(scatter_country_data)[0]
+# args = ip.getfullargspec(scatter_country_data)[0]
 
 FUNC_LIST = [
     scatter_country_data,
@@ -31,7 +31,7 @@ FUNC_LIST = [
     bar_reporting_country_data,
     map_reporting_dated_data,
     scatter_reporting_district_data,
-    indicator_group,
+    # indicator_group,
 ]
 
 FUNC_ARG_DICT = {}
@@ -51,7 +51,7 @@ FUNC_DF.index = [
     "reporting_country",
     "reporting_dated",
     "reporting_district",
-    "indicator_group",
+    # "indicator_group",
 ]
 
 FUNC_DF.rename(columns={"index": "function"}, inplace=True)
@@ -65,8 +65,9 @@ def define_datasets(controls, last_controls=None):
     if not last_controls:
 
         for dataset_name in FUNC_DF.index:
-            db.include_dataset(dataset_name, FUNC_DF.loc[dataset_name, "function"](**controls))
-            # datasets[i] = FUNC_DF.loc[i, "function"](dfs, static, **controls)
+            db.include_dataset(
+                dataset_name, FUNC_DF.loc[dataset_name, "function"](**controls)
+            )
 
     else:
 
@@ -75,12 +76,13 @@ def define_datasets(controls, last_controls=None):
         changed = new[(new != last).any(1)]
         changed_keys = set(changed.index)
 
-        for i in FUNC_DF.index:
-            args = set(FUNC_DF.loc[i, range(0, 7)].unique())
+        for dataset_name in FUNC_DF.index:
+            args = set(FUNC_DF.loc[dataset_name, range(0, 7)].unique())
             if len(args.intersection(changed_keys)) > 0:
-                datasets[i] = FUNC_DF.loc[i, "function"](
-                    dfs, static, **controls)
-                func_name = str(FUNC_DF.loc[i, "function"]).split(" ")[1]
+                db.include_dataset(
+                    dataset_name, FUNC_DF.loc[dataset_name, "function"](**controls)
+                )
+                func_name = str(FUNC_DF.loc[dataset_name, "function"]).split(" ")[1]
                 print(f"ran function {func_name}")
 
-    return datasets
+    return db.datasets

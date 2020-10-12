@@ -6,7 +6,6 @@ from store import (
     get_percentage,
     get_sub_dfs,
     month_order,
-    index_base_columns,
     timeit,
     Database,
     static,
@@ -17,6 +16,7 @@ import pandas as pd
 # CARD 1
 
 
+@timeit
 def scatter_country_data(*, outlier, indicator, indicator_group, **kwargs):
 
     # dfs, static,
@@ -27,7 +27,7 @@ def scatter_country_data(*, outlier, indicator, indicator_group, **kwargs):
 
     df = db.filter_by_indicator(df, indicator)
 
-    df = db.pivot(df)
+    df = db.pivot_single(df)
 
     # df_country = get_national_sum(df, indicator) (already done in get_perc)
 
@@ -46,6 +46,7 @@ def scatter_country_data(*, outlier, indicator, indicator_group, **kwargs):
 # CARD 2
 
 
+@timeit
 def map_bar_country_dated_data(
     *,
     outlier,
@@ -64,7 +65,7 @@ def map_bar_country_dated_data(
 
     df = db.filter_by_indicator(df, indicator)
 
-    df = db.pivot(df)
+    df = db.pivot_single(df)
 
     data_in = filter_df_by_dates(
         df, target_year, target_month, reference_year, reference_month
@@ -111,6 +112,7 @@ def map_bar_country_dated_data(
 # CARD 3
 
 
+@timeit
 def scatter_district_data(*, outlier, indicator, indicator_group, district, **kwargs):
 
     db = Database()
@@ -119,7 +121,7 @@ def scatter_district_data(*, outlier, indicator, indicator_group, district, **kw
 
     df = db.filter_by_indicator(df, indicator)
 
-    df = db.pivot(df)
+    df = db.pivot_single(df)
 
     df_district = filter_by_district(df, district)
     df_district = get_district_sum(df_district, indicator)
@@ -137,6 +139,7 @@ def scatter_district_data(*, outlier, indicator, indicator_group, district, **kw
 # CARD 4
 
 
+@timeit
 def tree_map_district_dated_data(
     *,
     outlier,
@@ -155,7 +158,7 @@ def tree_map_district_dated_data(
 
     df = db.filter_by_indicator(df, indicator)
 
-    df = db.pivot(df)
+    df = db.pivot_single(df)
 
     # TODO check how the date function works such that it shows only target date
 
@@ -168,6 +171,7 @@ def tree_map_district_dated_data(
     return df_district_dated
 
 
+@timeit
 def scatter_facility_data(*, outlier, indicator, district, facility, **kwargs):
 
     db = Database()
@@ -176,7 +180,7 @@ def scatter_facility_data(*, outlier, indicator, district, facility, **kwargs):
 
     df = db.filter_by_indicator(df, indicator)
 
-    df = db.pivot(df)
+    df = db.pivot_single(df)
 
     df_facility = filter_by_district(df, district)
 
@@ -197,6 +201,7 @@ def scatter_facility_data(*, outlier, indicator, district, facility, **kwargs):
 # CARD 5
 
 
+@timeit
 def bar_reporting_country_data(*, indicator, **kwargs):
 
     db = Database()
@@ -211,6 +216,7 @@ def bar_reporting_country_data(*, indicator, **kwargs):
 # CARD 6
 
 
+@timeit
 def map_reporting_dated_data(
     *,
     indicator,
@@ -225,9 +231,9 @@ def map_reporting_dated_data(
 
     df = db.data_rep
 
-    df = db.pivot(df)
-
     df = db.filter_by_indicator(df, indicator)
+
+    df = db.pivot_single(df)
 
     df = filter_df_by_dates(
         df, target_year, target_month, reference_year, reference_month
@@ -239,15 +245,16 @@ def map_reporting_dated_data(
 # CARD 7
 
 
+@timeit
 def scatter_reporting_district_data(*, indicator, district, **kwargs):
 
     db = Database()
 
     df = db.data_rep
 
-    df = db.pivot(df)
+    df = db.filter_by_indicator(df, indicator)
 
-    df = db.filter_by_policy(df, indicator)
+    df = db.pivot_single(df)
 
     df_reporting_district = filter_by_district(df, district)
 
@@ -257,13 +264,14 @@ def scatter_reporting_district_data(*, indicator, district, **kwargs):
 # Indicator group grid
 
 
+@timeit
 def indicator_group(*, indicator_group, outlier, **kwargs):
 
     db = Database()
 
     df = db.filter_by_policy(outlier)
 
-    df = db.pivot(df)
+    df = db.pivot_single(df)
 
     # !FIXME when mutations and store are decoupled! !IMPORTANT
 
@@ -354,7 +362,7 @@ def indicator_group(*, indicator_group, outlier, **kwargs):
         indicators_groups[indicators_groups.group == indicator_group].indicator
     )
 
-    columns_to_keep = index_base_columns + indicators
+    columns_to_keep = db.index_columns + indicators
     df = df[columns_to_keep]
 
     return df

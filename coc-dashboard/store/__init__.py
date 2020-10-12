@@ -23,7 +23,7 @@ db.filter_by_policy = lambda outlier: getattr(Database(), dropdown_filters.get(o
 
 db.filter_by_indicator = lambda df, indicator: df[
     df.indicator_name == indicator
-].reset_index()
+].reset_index(drop=True)
 
 
 # STATIC DATA

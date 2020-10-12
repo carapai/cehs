@@ -1,5 +1,5 @@
 from model.statistics_summary import StatisticSummary
-from store import dfs
+from store import Database
 import numpy as np
 
 
@@ -13,8 +13,7 @@ def statistics_transform(data):
     total_opd = data.pivot_table(
         columns="year", values="OPD attendance", aggfunc=np.sum
     )
-    total_dpt3 = data.pivot_table(
-        columns="year", values="DPT3 (all)", aggfunc=np.sum)
+    total_dpt3 = data.pivot_table(columns="year", values="DPT3 (all)", aggfunc=np.sum)
     total_sam = data.pivot_table(
         columns="year", values="Number of SAM admissions", aggfunc=np.sum
     )
@@ -55,5 +54,4 @@ def statistics_transform(data):
     return data_out
 
 
-statistics = StatisticSummary(
-    data=statistics_transform(next(iter(dfs.values()))))
+statistics = StatisticSummary(data=statistics_transform(Database().data_raw))

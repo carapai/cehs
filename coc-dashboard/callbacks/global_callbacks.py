@@ -12,7 +12,6 @@ from store import (
     CONTROLS,
     LAST_CONTROLS,
     define_datasets,
-    dfs,
     district_control_group,
     init_data_set,
     month_order,
@@ -34,7 +33,7 @@ def global_story_callback(*inputs):
     target_year = inputs[4]
     target_month = inputs[5]
     district = inputs[6]
-    #indicator_type = inputs[7]
+    # indicator_type = inputs[7]
     indicator_group = inputs[7]
 
     global LAST_CONTROLS
@@ -42,7 +41,7 @@ def global_story_callback(*inputs):
 
     CONTROLS["outlier"] = outlier
     CONTROLS["indicator"] = indicator
-    #CONTROLS["indicator_type"] = indicator_type
+    # CONTROLS["indicator_type"] = indicator_type
     CONTROLS["district"] = district
     CONTROLS["target_year"] = target_year
     CONTROLS["target_month"] = target_month
@@ -52,13 +51,7 @@ def global_story_callback(*inputs):
 
     global init_data_set
 
-    init_data_set = define_datasets(
-        static,
-        dfs,
-        controls=CONTROLS,
-        last_controls=LAST_CONTROLS,
-        datasets=init_data_set,
-    )
+    init_data_set = define_datasets(controls=CONTROLS, last_controls=LAST_CONTROLS)
 
     ds.switch_data_set(init_data_set)
 
@@ -190,17 +183,10 @@ def update_on_click(*inputs):
 
         CONTROLS["facility"] = label
 
-        init_data_set = define_datasets(
-            static,
-            dfs,
-            controls=CONTROLS,
-            last_controls=LAST_CONTROLS,
-            datasets=init_data_set,
-        )
+        init_data_set = define_datasets(controls=CONTROLS, last_controls=LAST_CONTROLS)
 
         facility_scatter.data = init_data_set
-        facility_scatter.figure = facility_scatter._get_figure(
-            facility_scatter.data)
+        facility_scatter.figure = facility_scatter._get_figure(facility_scatter.data)
         facility_scatter.figure_title = (
             f"Evolution of $label$ in {label} (click on the graph above to filter)"
         )
