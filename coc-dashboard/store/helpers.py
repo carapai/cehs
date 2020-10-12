@@ -19,23 +19,10 @@ month_order = [
     "Dec",
 ]
 
-index_base_columns = ["id", "date", "year",
-                      "month", "facility_id", "facility_name"]
+index_base_columns = ["id", "date", "year", "month", "facility_id", "facility_name"]
 
 
 # Filtering methods for data transform functions
-
-
-def filter_df_by_policy(dfs, key):
-    df = dfs.get(key)
-    return df
-
-
-def filter_df_by_indicator(df, indicator, persist_columns=[]):
-    columns_to_keep = persist_columns + [indicator]
-    df = df[columns_to_keep]
-
-    return df
 
 
 def filter_df_by_dates(df, target_year, target_month, reference_year, reference_month):
@@ -150,7 +137,7 @@ def reporting_count_transform(data):
 #     return sex, ages
 
 
-def get_percentage(df, pop, pop_tgt, ind_type, indicator, all_country=False):
+def get_percentage(df, pop, pop_tgt, indicator, all_country=False):
     """
     Transforms the data using percentage of a target population, and group it by district or country
     """
@@ -171,9 +158,9 @@ def get_percentage(df, pop, pop_tgt, ind_type, indicator, all_country=False):
 
     # Else get target population, merge it and calculate percentage
 
-    elif ind_type == 'Percentage':
+    elif ind_type == "Percentage":
 
-        target = pop_tgt[pop_tgt.indicator == indicator]['cat'][0]
+        target = pop_tgt[pop_tgt.indicator == indicator]["cat"][0]
         val_col = df.columns[-1]
 
         columns = merge + [target]
@@ -182,8 +169,7 @@ def get_percentage(df, pop, pop_tgt, ind_type, indicator, all_country=False):
 
         data_in = df.groupby(index, as_index=False).sum()
 
-        data_in = pd.merge(data_in, pop_in,
-                           how="left", left_on=merge, right_on=merge)
+        data_in = pd.merge(data_in, pop_in, how="left", left_on=merge, right_on=merge)
 
         data_in[val_col] = (data_in[val_col] / data_in[target]) * 12
 

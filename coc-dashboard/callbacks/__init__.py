@@ -8,8 +8,6 @@ from components import (
 )
 from dash.dependencies import Input, Output, State
 from store import (
-    define_datasets,
-    dfs,
     district_control_group,
     indicator_dropdown_group,
     init_data_set,

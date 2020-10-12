@@ -2,6 +2,7 @@ import pandas as pd
 import inspect as ip
 
 from store.helpers import timeit
+from store.database import Database
 
 from .cards_mutations import (
     scatter_country_data,
@@ -57,12 +58,15 @@ FUNC_DF.rename(columns={"index": "function"}, inplace=True)
 
 
 @timeit
-def define_datasets(static, dfs, controls, last_controls={}, datasets={}):
+def define_datasets(controls, last_controls=None):
 
-    if last_controls == {}:
+    db = Database()
 
-        for i in FUNC_DF.index:
-            datasets[i] = FUNC_DF.loc[i, "function"](dfs, static, **controls)
+    if not last_controls:
+
+        for dataset_name in FUNC_DF.index:
+            db.include_dataset(dataset_name, FUNC_DF.loc[dataset_name, "function"](**controls))
+            # datasets[i] = FUNC_DF.loc[i, "function"](dfs, static, **controls)
 
     else:
 

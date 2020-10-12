@@ -1,6 +1,4 @@
 from store import (
-    filter_df_by_policy,
-    filter_df_by_indicator,
     filter_df_by_dates,
     filter_by_district,
     get_district_sum,
@@ -10,6 +8,8 @@ from store import (
     month_order,
     index_base_columns,
     timeit,
+    Database,
+    static,
 )
 
 import pandas as pd
@@ -17,12 +17,17 @@ import pandas as pd
 # CARD 1
 
 
-def scatter_country_data(dfs, static, *, outlier, indicator, indicator_type, **kwargs):
+def scatter_country_data(*, outlier, indicator, **kwargs):
 
-    df = filter_df_by_policy(dfs, outlier)
+    # dfs, static,
 
-    df = filter_df_by_indicator(
-        df, indicator, persist_columns=index_base_columns)
+    db = Database()
+
+    df = db.filter_by_policy(outlier)
+
+    df = db.filter_by_indicator(df, indicator)
+
+    df = db.pivot(df)
 
     # df_country = get_national_sum(df, indicator) (already done in get_perc)
 
@@ -30,7 +35,6 @@ def scatter_country_data(dfs, static, *, outlier, indicator, indicator_type, **k
         df,
         static.get("population data"),
         static.get("target population type"),
-        indicator_type,
         indicator,
         all_country=True,
     )
@@ -42,12 +46,9 @@ def scatter_country_data(dfs, static, *, outlier, indicator, indicator_type, **k
 
 
 def map_bar_country_dated_data(
-    dfs,
-    static,
     *,
     outlier,
     indicator,
-    indicator_type,
     target_year,
     target_month,
     reference_year,
@@ -55,10 +56,13 @@ def map_bar_country_dated_data(
     **kwargs,
 ):
 
-    df = filter_df_by_policy(dfs, outlier)
+    db = Database()
 
-    df = filter_df_by_indicator(
-        df, indicator, persist_columns=index_base_columns)
+    df = db.filter_by_policy(outlier)
+
+    df = db.filter_by_indicator(df, indicator)
+
+    df = db.pivot(df)
 
     data_in = filter_df_by_dates(
         df, target_year, target_month, reference_year, reference_month
@@ -68,7 +72,6 @@ def map_bar_country_dated_data(
         data_in,
         static.get("population data"),
         static.get("target population type"),
-        indicator_type,
         indicator,
     )
 
@@ -77,8 +80,7 @@ def map_bar_country_dated_data(
     # TODO updat teh filter by data function so that this step is no longer needed
 
     mask = (
-        (data_in.year == int(reference_year)) & (
-            data_in.month == reference_month)
+        (data_in.year == int(reference_year)) & (data_in.month == reference_month)
     ) | ((data_in.year == int(target_year)) & (data_in.month == target_month))
 
     data_in = data_in[mask]
@@ -106,13 +108,15 @@ def map_bar_country_dated_data(
 # CARD 3
 
 
-def scatter_district_data(
-    dfs, static, *, outlier, indicator, indicator_type, district, **kwargs
-):
-    df = filter_df_by_policy(dfs, outlier)
+def scatter_district_data(*, outlier, indicator, district, **kwargs):
 
-    df = filter_df_by_indicator(
-        df, indicator, persist_columns=index_base_columns)
+    db = Database()
+
+    df = db.filter_by_policy(outlier)
+
+    df = db.filter_by_indicator(df, indicator)
+
+    df = db.pivot(df)
 
     df_district = filter_by_district(df, district)
     df_district = get_district_sum(df_district, indicator)
@@ -120,7 +124,6 @@ def scatter_district_data(
         df_district,
         static.get("population data"),
         static.get("target population type"),
-        indicator_type,
         indicator,
     )
 
@@ -131,8 +134,6 @@ def scatter_district_data(
 
 
 def tree_map_district_dated_data(
-    dfs,
-    static,
     *,
     outlier,
     indicator,
@@ -144,10 +145,13 @@ def tree_map_district_dated_data(
     **kwargs,
 ):
 
-    df = filter_df_by_policy(dfs, outlier)
+    db = Database()
 
-    df = filter_df_by_indicator(
-        df, indicator, persist_columns=index_base_columns)
+    df = db.filter_by_policy(outlier)
+
+    df = db.filter_by_indicator(df, indicator)
+
+    df = db.pivot(df)
 
     # TODO check how the date function works such that it shows only target date
 
@@ -160,14 +164,15 @@ def tree_map_district_dated_data(
     return df_district_dated
 
 
-def scatter_facility_data(
-    dfs, static, *, outlier, indicator, district, facility, **kwargs
-):
+def scatter_facility_data(*, outlier, indicator, district, facility, **kwargs):
 
-    df = filter_df_by_policy(dfs, outlier)
+    db = Database()
 
-    df = filter_df_by_indicator(
-        df, indicator, persist_columns=index_base_columns)
+    df = db.filter_by_policy(outlier)
+
+    df = db.filter_by_indicator(df, indicator)
+
+    df = db.pivot(df)
 
     df_facility = filter_by_district(df, district)
 
@@ -188,23 +193,21 @@ def scatter_facility_data(
 # CARD 5
 
 
-def bar_reporting_country_data(dfs, static, *, indicator, **kwargs):
+def bar_reporting_country_data(*, indicator, **kwargs):
 
-    df_reporting = filter_df_by_policy(dfs, "Reporting")
+    db = Database()
 
-    df_reporting = filter_df_by_indicator(
-        df_reporting, indicator, persist_columns=index_base_columns
-    )
+    df = db.data_rep
 
-    return df_reporting
+    df = db.filter_by_indicator(df, indicator)
+
+    return df
 
 
 # CARD 6
 
 
 def map_reporting_dated_data(
-    dfs,
-    static,
     *,
     indicator,
     target_year,
@@ -214,31 +217,35 @@ def map_reporting_dated_data(
     **kwargs,
 ):
 
-    df_reporting = filter_df_by_policy(dfs, "Reporting")
+    db = Database()
 
-    df_reporting = filter_df_by_indicator(
-        df_reporting, indicator, persist_columns=index_base_columns
+    df = db.data_rep
+
+    df = db.pivot(df)
+
+    df = db.filter_by_indicator(df, indicator)
+
+    df = filter_df_by_dates(
+        df, target_year, target_month, reference_year, reference_month
     )
 
-    df_reporting_dated = filter_df_by_dates(
-        df_reporting, target_year, target_month, reference_year, reference_month
-    )
-
-    return df_reporting_dated
+    return df
 
 
 # CARD 7
 
 
-def scatter_reporting_district_data(dfs, static, *, indicator, district, **kwargs):
+def scatter_reporting_district_data(*, indicator, district, **kwargs):
 
-    df_reporting = filter_df_by_policy(dfs, "Reporting")
+    db = Database()
 
-    df_reporting = filter_df_by_indicator(
-        df_reporting, indicator, persist_columns=index_base_columns
-    )
+    df = db.data_rep
 
-    df_reporting_district = filter_by_district(df_reporting, district)
+    df = db.pivot(df)
+
+    df = db.filter_by_policy(df, indicator)
+
+    df_reporting_district = filter_by_district(df, district)
 
     return df_reporting_district
 
@@ -246,9 +253,13 @@ def scatter_reporting_district_data(dfs, static, *, indicator, district, **kwarg
 # Indicator group grid
 
 
-def indicator_group(dfs, static, *, indicator_group, outlier, **kwargs):
+def indicator_group(*, indicator_group, outlier, **kwargs):
 
-    df = filter_df_by_policy(dfs, outlier)
+    db = Database()
+
+    df = db.filter_by_policy(outlier)
+
+    df = db.pivot(df)
 
     # !FIXME when mutations and store are decoupled! !IMPORTANT
 
@@ -264,18 +275,40 @@ def indicator_group(dfs, static, *, indicator_group, outlier, **kwargs):
             "Newborn deaths",
             "Postnatal Visits",
         ],
-        EPI=['BCG (all)', 'BCG (outreach)', 'BCG (static)',
-             'DPT1 (all)', 'DPT1 (outreach)', 'DPT1 (static)',
-             'DPT3 (all)', 'DPT3 (outreach)', 'DPT3 (static)',
-             'HPV1 (all)', 'HPV1 (community)', 'HPV1 (school)',
-             'HPV2 (all)', 'HPV2 (community)', 'HPV2 (school)',
-             'MR1 (all)', 'MR1 (outreach)', 'MR1 (static)',
-             'PCV1 (all)', 'PCV1 (outreach)', 'PCV1 (static)',
-             'PCV3 (all)', 'PCV3 (outreach)', 'PCV3 (static)',
-             'TD1 (nonpregnant)', 'TD1 (pregnant)',
-             'TD2 (nonpregnant)', 'TD2 (pregnant)',
-             'TD3 (nonpregnant)', 'TD3 (pregnant)',
-             'TD4-5 (nonpregnant)', 'TD4-5 (pregnant)'],
+        EPI=[
+            "BCG (all)",
+            "BCG (outreach)",
+            "BCG (static)",
+            "DPT1 (all)",
+            "DPT1 (outreach)",
+            "DPT1 (static)",
+            "DPT3 (all)",
+            "DPT3 (outreach)",
+            "DPT3 (static)",
+            "HPV1 (all)",
+            "HPV1 (community)",
+            "HPV1 (school)",
+            "HPV2 (all)",
+            "HPV2 (community)",
+            "HPV2 (school)",
+            "MR1 (all)",
+            "MR1 (outreach)",
+            "MR1 (static)",
+            "PCV1 (all)",
+            "PCV1 (outreach)",
+            "PCV1 (static)",
+            "PCV3 (all)",
+            "PCV3 (outreach)",
+            "PCV3 (static)",
+            "TD1 (nonpregnant)",
+            "TD1 (pregnant)",
+            "TD2 (nonpregnant)",
+            "TD2 (pregnant)",
+            "TD3 (nonpregnant)",
+            "TD3 (pregnant)",
+            "TD4-5 (nonpregnant)",
+            "TD4-5 (pregnant)",
+        ],
         GENERAL=["OPD attendance", "IPD attendance"],
         HIV=[
             "Tested HIV",
