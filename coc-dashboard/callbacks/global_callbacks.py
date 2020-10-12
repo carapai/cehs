@@ -20,8 +20,9 @@ from store import (
     static,
     target_date,
     timeit,
-    indicator_group,
-    get_perc_description)
+    indicator_groups,
+    get_perc_description,
+    get_new_indic_name)
 
 from view import ds
 
@@ -77,8 +78,8 @@ def change_titles(*inputs):
     district = inputs[6]
     indicator_group_select = inputs[7]
 
-    indicator_view_name = indicator_group[(indicator_group['Choose an indicator'] == indicator) & (
-        indicator_group['Choose an indicator group'] == indicator_group_select)]['View'].values[0]
+    indicator_view_name = get_new_indic_name(
+        indicator_groups, indicator, indicator_group_select)
 
     # Data card 1
 

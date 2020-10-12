@@ -238,3 +238,14 @@ def get_perc_description(perc):
     elif perc <= 0.1:
         descrip = f'decreased by {perc_abs}%'
     return descrip
+
+
+def get_new_indic_name(indicator_group, indicator, indicator_group_select=None):
+    if indicator_group_select:
+        indicator_view_name = indicator_group[
+            (indicator_group['Choose an indicator'] == indicator) &
+            (indicator_group['Choose an indicator group'] == indicator_group_select)]['View'].values[0]
+    else:
+        indicator_view_name = indicator_group[
+            indicator_group['Choose an indicator'] == indicator]['View'].values[0]
+    return indicator_view_name
