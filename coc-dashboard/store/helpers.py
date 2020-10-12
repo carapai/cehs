@@ -136,18 +136,6 @@ def reporting_count_transform(data):
 
 
 # def parse_target_pop(df, indicator):
-#     new = []
-#     for x in df.index:
-#         y = df.loc[x, "ages"]
-#         z = y.split(" ")
-#         new.append(z)
-#     df["age_list"] = new
-#     df = df[df.indicator == indicator]
-#     sex = df["sex"][0]
-#     ages = df["age_list"][0]
-#     # TODO Modify to accout for more than 1 line in teh file
-#     # TODO : Deete as it is now outdated
-#     return sex, ages
 
 
 def get_percentage(df, pop, pop_tgt, indicator_group, indicator, all_country=False):
@@ -237,3 +225,16 @@ def timeit(f):
         return result
 
     return timed
+
+# Formattimg method
+
+
+def get_perc_description(perc):
+    perc_abs = abs(perc)
+    if perc >= 0.1:
+        descrip = f'increased by {perc_abs}%'
+    elif perc_abs < 0.1:
+        descrip = 'remained stable'
+    elif perc <= 0.1:
+        descrip = f'decreased by {perc_abs}%'
+    return descrip

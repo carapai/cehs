@@ -49,7 +49,7 @@ bar_chart_ranks_bottom = ChartDataCard(
 )
 
 country_overview = CardLayout(
-    title="Percentage change in number of children under one receiving their $label$ between target and reference date",
+    title="Percentage change of $label$ between target and reference date",
     elements=[country_overview_map, bar_chart_ranks_bottom],
 )
 

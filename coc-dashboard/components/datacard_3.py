@@ -26,7 +26,7 @@ def scatter_district_plot(df):
 
 district_overview_scatter = ChartDataCard(
     title="Deep-dive in the selected district: The number of $label$ changed by % between 05-2019 and 05-2020",
-    fig_title="Total number of $label$ in the selected district",
+    fig_title="Total $label$ in the selected district",
     data=init_data_set,
     data_transform=scatter_district_plot,
     fig_type="Scatter",

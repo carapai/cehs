@@ -6,8 +6,8 @@ from components import (
     facility_scatter,
     stacked_bar_district,
     stacked_bar_reporting_country,
-    tree_map_district,
-)
+    tree_map_district)
+
 from store import (
     CONTROLS,
     LAST_CONTROLS,
@@ -20,7 +20,9 @@ from store import (
     static,
     target_date,
     timeit,
-)
+    indicator_group,
+    get_perc_description)
+
 from view import ds
 
 
@@ -34,7 +36,6 @@ def global_story_callback(*inputs):
     target_year = inputs[4]
     target_month = inputs[5]
     district = inputs[6]
-    #indicator_type = inputs[7]
     indicator_group = inputs[7]
 
     global LAST_CONTROLS
@@ -42,7 +43,6 @@ def global_story_callback(*inputs):
 
     CONTROLS["outlier"] = outlier
     CONTROLS["indicator"] = indicator
-    #CONTROLS["indicator_type"] = indicator_type
     CONTROLS["district"] = district
     CONTROLS["target_year"] = target_year
     CONTROLS["target_month"] = target_month
@@ -75,9 +75,15 @@ def change_titles(*inputs):
     target_year = inputs[4]
     target_month = inputs[5]
     district = inputs[6]
+    indicator_group_select = inputs[7]
+
+    indicator_view_name = indicator_group[(indicator_group['Choose an indicator'] == indicator) & (
+        indicator_group['Choose an indicator group'] == indicator_group_select)]['View'].values[0]
+
+    # Data card 1
 
     try:
-        # Data card 1
+
         data = country_overview_scatter.data
         data_reference = data.get(int(reference_year))
         data_target = data.get(int(target_year))
@@ -91,11 +97,13 @@ def change_titles(*inputs):
             )
             * 100
         )
+        descrip = get_perc_description(perc_first)
+
     except Exception as e:
         print(e)
-        perc_first = "?"
+        descrip = "changed by an unknown percentage"
 
-    country_overview_scatter.title = f"Overview: Across the country, the number of {indicator} changed by {perc_first}% between {reference_month}-{reference_year} and {target_month}-{target_year}"
+    country_overview_scatter.title = f"Overview: Across the country, the {indicator_view_name} {descrip} between {reference_month}-{reference_year} and {target_month}-{target_year}"
 
     try:
 
@@ -114,12 +122,13 @@ def change_titles(*inputs):
             )
             * 100
         )
+        descrip = get_perc_description(dist_perc)
 
     except Exception as e:
         print(e)
-        dist_perc = "?"
+        descrip = "changed by an unknown percentage"
 
-    district_overview_scatter.title = f"Deep-dive in {district} district: The number of {indicator} changed by {dist_perc}% between {reference_month}-{reference_year} and {target_month}-{target_year}"
+    district_overview_scatter.title = f"Deep-dive in {district} district: the {indicator_view_name} {descrip} between {reference_month}-{reference_year} and {target_month}-{target_year}"
 
     try:
         data_reporting = stacked_bar_reporting_country.data
@@ -162,10 +171,10 @@ def change_titles(*inputs):
         reported_positive = "?"
 
     stacked_bar_reporting_country.title = (
-        f"Reporting: On {target_month}-{target_year}, around {reported_perc}% of facilities reported on their 105:1 form, and, out of those, {reported_positive}% reported for number of {indicator}",
+        f"Reporting: On {target_month}-{target_year}, around {reported_perc}% of facilities reported on their 105:1 form, and, out of those, {reported_positive}% reported for {indicator_view_name}",
     )
 
-    tree_map_district.title = f"Contribution of individual facilities in {district} district to the total number of {indicator} on {target_month}-{target_year}"
+    tree_map_district.title = f"Contribution of individual facilities in {district} district to the {indicator_view_name} on {target_month}-{target_year}"
 
     return [
         country_overview_scatter.title,
