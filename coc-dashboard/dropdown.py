@@ -27,19 +27,30 @@ def initiate_dropdowns(data_outliers, indicator_group):
 
     # TODO make that sustainable for beyond 2020
 
-    max_year = int(str(data_outliers.date.max()).split('-')[0])
-    max_month_number = int(str(data_outliers.date.max()).split('-')[1])
+    # Initiate data selection dropdowns
+
+    max_date = data_outliers.date.max()
+    (max_year, max_month_number) = (max_date.year, max_date.month)
     max_month = month_order[max_month_number-1]
 
     years = [2018] * 12 + [2019] * 12 + [2020] * max_month_number
 
-    date_columns = pd.DataFrame(
-        {"year": years, "month": month_order * 2 + month_order[:max_month_number]})
+    date_columns = pd.DataFrame({"year": years,
+                                 "month": month_order * 2 + month_order[:max_month_number]})
+
     date_columns.year = date_columns.year.astype(str)
+
     date_columns.columns = ["Target Year", "Target Month"]
-    target_date = NestedDropdownGroup(
-        date_columns.copy(), title="Select target date", vertical=False
-    )
+    target_date = NestedDropdownGroup(date_columns.copy(),
+                                      title="Select target date",
+                                      vertical=False)
+
+    date_columns.columns = ["Reference Year", "Reference Month"]
+    reference_date = NestedDropdownGroup(date_columns,
+                                         title="Select reference date",
+                                         vertical=False)
+
+    # Initiate outlier policy dropdown
 
     outlier_policy_dropdown_group = NestedDropdownGroup(
         pd.DataFrame(
@@ -54,17 +65,12 @@ def initiate_dropdowns(data_outliers, indicator_group):
         title="Select an outlier correction policy",
     )
 
+    # Initiate indicator dropdown
+
     indicator_dropdown_group = NestedDropdownGroup(
         indicator_group[['Choose an indicator group',
                          'Choose an indicator']],
         title="Select an indicator"
-    )
-
-    # TODO Have those defined as this month - 1
-
-    date_columns.columns = ["Reference Year", "Reference Month"]
-    reference_date = NestedDropdownGroup(
-        date_columns, title="Select reference date", vertical=False
     )
 
     district_control_group = NestedDropdownGroup(
@@ -73,7 +79,7 @@ def initiate_dropdowns(data_outliers, indicator_group):
         title="Select a district",
     )
 
-    # DATE
+    # Date of last download
 
     date_df = pd.read_csv("./coc-dashboard/data/chron_date.csv")
     date_df["Date"] = pd.to_datetime(date_df.Date).dt.strftime("%B-%d-%Y")
