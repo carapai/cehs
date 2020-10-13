@@ -28,18 +28,31 @@ def initiate_dropdowns():
 
     db = Database()
 
-    # TODO make that sustainable for beyond 2020
+    # Initiate data selection dropdowns
 
-    years = [2018] * 12 + [2019] * 12 + [2020] * 8
+    max_date = db.raw_data.get("value_raw").date.max()
+    (max_year, max_month_number) = (max_date.year, max_date.month)
+    max_month = month_order[max_month_number - 1]
+
+    years = [2018] * 12 + [2019] * 12 + [2020] * max_month_number
 
     date_columns = pd.DataFrame(
-        {"year": years, "month": month_order * 2 + month_order[:8]}
+        {"year": years, "month": month_order * 2 + month_order[:max_month_number]}
     )
+
     date_columns.year = date_columns.year.astype(str)
+
     date_columns.columns = ["Target Year", "Target Month"]
     target_date = NestedDropdownGroup(
         date_columns.copy(), title="Select target date", vertical=False
     )
+
+    date_columns.columns = ["Reference Year", "Reference Month"]
+    reference_date = NestedDropdownGroup(
+        date_columns, title="Select reference date", vertical=False
+    )
+
+    # Initiate outlier policy dropdown
 
     outlier_policy_dropdown_group = NestedDropdownGroup(
         pd.DataFrame(
@@ -56,13 +69,6 @@ def initiate_dropdowns():
 
     indicator_dropdown_group = NestedDropdownGroup(
         db.indicator_dropdowns, title="Select an indicator"
-    )
-
-    # TODO Have those defined as this month - 1
-
-    date_columns.columns = ["Reference Year", "Reference Month"]
-    reference_date = NestedDropdownGroup(
-        date_columns, title="Select reference date", vertical=False
     )
 
     district_control_group = NestedDropdownGroup(

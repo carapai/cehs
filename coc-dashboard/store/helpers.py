@@ -80,7 +80,7 @@ def get_sub_dfs(df, select_index, values, new_index, order=None):
     return traces
 
 
-def get_num(df, value="positive_indic"):
+def get_num(df, value=3):
     """
     Gets a dataframe of the count of the specified value for each column; expects index formatting including date and id
     """
@@ -103,11 +103,11 @@ def reporting_count_transform(data):
     # Remove unnecessary index values
     data = data.droplevel(["id"])
     # Count number of positive_indic
-    df_positive = get_num(data, "positive_indic")
+    df_positive = get_num(data, 3)
     # Count number of no_positive_indic
-    df_no_positive = get_num(data, "no_positive_indic")
+    df_no_positive = get_num(data, 2)
     # Count number of no_form_report
-    df_no_form_report = get_num(data, "no_form_report")
+    df_no_form_report = get_num(data, 1)
 
     data = {
         "Reported a positive number": df_positive,
@@ -121,18 +121,6 @@ def reporting_count_transform(data):
 
 
 # def parse_target_pop(df, indicator):
-#     new = []
-#     for x in df.index:
-#         y = df.loc[x, "ages"]
-#         z = y.split(" ")
-#         new.append(z)
-#     df["age_list"] = new
-#     df = df[df.indicator == indicator]
-#     sex = df["sex"][0]
-#     ages = df["age_list"][0]
-#     # TODO Modify to accout for more than 1 line in teh file
-#     # TODO : Deete as it is now outdated
-#     return sex, ages
 
 
 def get_percentage(df, pop, pop_tgt, indicator_group, indicator, all_country=False):
@@ -218,3 +206,27 @@ def timeit(f):
         return result
 
     return timed
+
+# Formattimg method
+
+
+def get_perc_description(perc):
+    perc_abs = abs(perc)
+    if perc >= 0.1:
+        descrip = f'increased by {perc_abs}%'
+    elif perc_abs < 0.1:
+        descrip = 'remained stable'
+    elif perc <= 0.1:
+        descrip = f'decreased by {perc_abs}%'
+    return descrip
+
+
+def get_new_indic_name(indicator_group, indicator, indicator_group_select=None):
+    if indicator_group_select:
+        indicator_view_name = indicator_group[
+            (indicator_group['Choose an indicator'] == indicator) &
+            (indicator_group['Choose an indicator group'] == indicator_group_select)]['View'].values[0]
+    else:
+        indicator_view_name = indicator_group[
+            indicator_group['Choose an indicator'] == indicator]['View'].values[0]
+    return indicator_view_name

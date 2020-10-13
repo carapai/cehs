@@ -1,0 +1,71 @@
+Choose an indicator group,Choose an indicator,View
+MNCH,1st ANC Visits,number of women attending their first ANC visit
+MNCH,4th ANC Visits,number of women attending their fourth ANC visit
+MNCH,Maternity Admissions,number of maternal admissions
+MNCH,Deliveries in unit,number of in-facility births
+MNCH,Deliveries in unit - live,number of in-facility live births
+MNCH,Deliveries in unit - fresh stillbirth,number of in-facility fresh stillbirths
+MNCH,Deliveries in unit - macerated stillbirth,number of in-facility macerated stillbirths
+MNCH,Newborn deaths,number of newborn deaths
+MNCH,Postnatal Visits,number of post-natal visits
+EPI,BCG (all),number of children under one receiving their BCG vaccine
+EPI,BCG (outreach),number of children under one receiving their BCG vaccine (outreach)
+EPI,BCG (static),number of children under one receiving their BCG vaccine (static)
+EPI,DPT1 (all),number of children under one receiving their DPT1 vaccine
+EPI,DPT1 (outreach),number of children under one receiving their DPT1 vaccine (outreach)
+EPI,DPT1 (static),number of children under one receiving their DPT1 vaccine (static)
+EPI,DPT3 (all),number of children under one receiving their DPT3 vaccine
+EPI,DPT3 (outreach),number of children under one receiving their DPT3 vaccine (outreach)
+EPI,DPT3 (static),number of children under one receiving their DPT3 vaccine (static)
+EPI,HPV1 (school),number of girls receiving their HPV1 vaccine (school)
+EPI,HPV1 (all),number of girls receiving their HPV1 vaccine
+EPI,HPV1 (community),number of girls receiving their HPV1 vaccine (community)
+EPI,HPV2 (school),number of girls receiving their HPV2 vaccine (school)
+EPI,HPV2 (all),number of girls receiving their HPV2 vaccine
+EPI,HPV2 (community),number of girls receiving their HPV2 vaccine (community)
+EPI,MR1 (all),number of children under one receiving their MR1  vaccine
+EPI,MR1 (outreach),number of children under one receiving their MR1  vaccine (outreach)
+EPI,MR1 (static),number of children under one receiving their MR1  vaccine (static)
+EPI,PCV1 (all),number of children under one receiving their PCV1 vaccine
+EPI,PCV1 (outreach),number of children under one receiving their PCV1 vaccine (outreach)
+EPI,PCV1 (static),number of children under one receiving their PCV1 vaccine (static)
+EPI,PCV3 (all),number of children under one receiving their PCV3 vaccine
+EPI,PCV3 (outreach),number of children under one receiving their PCV3 vaccine (outreach)
+EPI,PCV3 (static),number of children under one receiving their PCV3 vaccine (static)
+EPI,TD1 (nonpregnant),number of women receiving their TD1 vaccine (nonpregnant)
+EPI,TD1 (pregnant),number of women receiving their TD1 vaccine (pregnant)
+EPI,TD2 (nonpregnant),number of women receiving their TD2 vaccine (nonpregnant)
+EPI,TD2 (pregnant),number of women receiving their TD2 vaccine (pregnant)
+EPI,TD3 (nonpregnant),number of women receiving their TD3 vaccine (nonpregnant)
+EPI,TD3 (pregnant),number of women receiving their TD3 vaccine (pregnant)
+EPI,TD4-5 (nonpregnant),number of women receiving their TD4-5 vaccine (nonpregnant)
+EPI,TD4-5 (pregnant),number of women receiving their TD4-5 vaccine (pregnant)
+EPI (coverage),DPT1 (all),DPT1 vaccine coverage of children under one
+EPI (coverage),DPT3 (all),DPT3 vaccine coverage of children under one
+EPI (coverage),MR1 (all),MR1 vaccine coverage of children under one
+EPI (coverage),BCG (all),BCG vaccine coverage of children under one
+EPI (coverage),PCV1 (all),PCV1 vaccine coverage of children under one
+EPI (coverage),PCV2 (all),PCV2 vaccine coverage of children under one
+GENERAL,OPD attendance,number of outpatient visits
+GENERAL,IPD attendance,number of inpatient admissions
+HIV,Tested HIV,number of individuals tested for HIV
+HIV,Tested HIV positive,number of individuals tested positive for HIV
+HIV,HIV positive linked to care,number of HIV-positive individuals linked to care
+HIV,ANC tested HIV,number of pregnant women newly tested for HIV in ANC
+HIV,ANC tested HIV positive,number of pregnant women newly tested positive for HIV in ANC
+HIV,ANC initiated on ART,number of HIV-positive pregnant women initiated on ART in ANC
+HIV,Mat tested HIV,number of pregnant women tested for HIV in maternity
+HIV,Mat tested HIV positive,number of pregnant women tested positive for HIV in maternity
+HIV,Mat initiated on ART,number of HIV-positive women initiated on ART in maternity
+HIV,PNC tested HIV,number of breastfeeding women newly tested for HIV in PNC
+HIV,PNC tested HIV positive,number of breastfeeding women newly tested HIV positive in PNC
+HIV,PNC initiated on ART,number of HIV-positive women initiated on ART in PNC
+TB,TB cases registered,number of TB cases registered in treatment unit
+MAL,Malaria deaths,number of deaths due to Malaria
+MAL,Malaria cases treated,number of individuals treated for Malaria
+MAL,Malaria cases,number of individuals diagnosed with Malaria
+MAL,Malaria tests,number of individuals tested for Malaria
+NUT,Number of doses of vitamin A distributed,number of doses of vitamin A distributed
+NUT,Number of SAM admissions,number of SAM cases identified
+NUT,Number of MAM admissions,number of MAM cases identified
+NUT,Low weight births,number of low weight births
