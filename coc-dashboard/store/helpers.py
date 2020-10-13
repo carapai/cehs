@@ -95,7 +95,7 @@ def get_sub_dfs(df, select_index, values, new_index, order=None):
     return traces
 
 
-def get_num(df, value="positive_indic"):
+def get_num(df, value=3):
     """
     Gets a dataframe of the count of the specified value for each column; expects index formatting including date and id
     """
@@ -118,11 +118,11 @@ def reporting_count_transform(data):
     # Remove unnecessary index values
     data = data.droplevel(["id"])
     # Count number of positive_indic
-    df_positive = get_num(data, "positive_indic")
+    df_positive = get_num(data, 3)
     # Count number of no_positive_indic
-    df_no_positive = get_num(data, "no_positive_indic")
+    df_no_positive = get_num(data, 2)
     # Count number of no_form_report
-    df_no_form_report = get_num(data, "no_form_report")
+    df_no_form_report = get_num(data, 1)
 
     data = {
         "Reported a positive number": df_positive,
