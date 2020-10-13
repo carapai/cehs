@@ -25,16 +25,21 @@ DEFAULTS = {
 
 def initiate_dropdowns(data_outliers, indicator_group):
 
-    years = [2018] * 12 + [2019] * 12 + [2020] * 12
+    # TODO make that sustainable for beyond 2020
 
-    date_columns = pd.DataFrame({"year": years, "month": month_order * 3})
+    max_year = int(str(data_outliers.date.max()).split('-')[0])
+    max_month_number = int(str(data_outliers.date.max()).split('-')[1])
+    max_month = month_order[max_month_number-1]
+
+    years = [2018] * 12 + [2019] * 12 + [2020] * max_month_number
+
+    date_columns = pd.DataFrame(
+        {"year": years, "month": month_order * 2 + month_order[:max_month_number]})
     date_columns.year = date_columns.year.astype(str)
     date_columns.columns = ["Target Year", "Target Month"]
     target_date = NestedDropdownGroup(
         date_columns.copy(), title="Select target date", vertical=False
     )
-
-    # TODO Have those defined as this month - 1
 
     outlier_policy_dropdown_group = NestedDropdownGroup(
         pd.DataFrame(
@@ -113,11 +118,8 @@ def set_dropdown_defaults(
         "default_target_month")
 
     indicator_dropdown_group.dropdown_objects[0].value = DEFAULTS.get(
-        "default_indicator_type"
-    )
-    # TODO Link that to default indic
-    indicator_dropdown_group.dropdown_objects[1].value = "EPI"
-    indicator_dropdown_group.dropdown_objects[2].value = DEFAULTS.get(
+        "default_indicator_group")
+    indicator_dropdown_group.dropdown_objects[1].value = DEFAULTS.get(
         "default_indicator"
     )
 

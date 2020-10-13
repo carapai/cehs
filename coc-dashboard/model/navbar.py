@@ -39,14 +39,16 @@ class Navbar:
             html.P(
                 "Overview",
                 id="overview",
-                className="nav-element disabled",  # active_style if active == "overview" else "nav-element",
+                # active_style if active == "overview" else "nav-element",
+                className="nav-element disabled",
             ),
         ]
 
         return buttons
 
     def get_layout(self):
-        el_layout = [dbc.Row(x.layout, style={"margin": "0"}) for x in self.elements]
+        el_layout = [
+            dbc.Row(x.layout, style={"margin": "0"}) for x in self.elements]
         me_layout = [dbc.Row(x.layout) for x in self.methodology]
 
         html_nav = html.Div(
@@ -58,7 +60,8 @@ class Navbar:
                     [
                         dbc.Button("Controls", id="fade-button"),
                         html.P(
-                            html.Span("cloud_download", className="material-icons"),
+                            html.Span("cloud_download",
+                                      className="material-icons"),
                             className="nav-element",
                         ),
                         html.P(
@@ -90,7 +93,8 @@ class Navbar:
                         dbc.ModalHeader("Methodology"),
                         dbc.ModalBody(me_layout),
                         dbc.ModalFooter(
-                            dbc.Button("Close", id="info-close", className="ml-auto")
+                            dbc.Button("Close", id="info-close",
+                                       className="ml-auto")
                         ),
                     ],
                     id="info-fade",
@@ -103,4 +107,4 @@ class Navbar:
         return html_nav
 
     def _requires_dropdown(self):
-        return False
+        return True

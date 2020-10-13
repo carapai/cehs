@@ -19,7 +19,7 @@ from .cards_mutations import (
 
 # TODO find a smart way to iterate through imports rather than repeatthe list manually
 
-args = ip.getfullargspec(scatter_country_data)[0]
+#args = ip.getfullargspec(scatter_country_data)[0]
 
 FUNC_LIST = [
     scatter_country_data,

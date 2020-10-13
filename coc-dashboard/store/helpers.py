@@ -150,7 +150,7 @@ def reporting_count_transform(data):
 #     return sex, ages
 
 
-def get_percentage(df, pop, pop_tgt, ind_type, indicator, all_country=False):
+def get_percentage(df, pop, pop_tgt, indicator_group, indicator, all_country=False):
     """
     Transforms the data using percentage of a target population, and group it by district or country
     """
@@ -164,16 +164,18 @@ def get_percentage(df, pop, pop_tgt, ind_type, indicator, all_country=False):
         merge = merge[1:]
         index = index[1:4]
 
+    ind_type = indicator_group.split('(')[-1][:-1]
+
     # Return the data as is, with a simple grouby if we are showing absolute numbers
 
-    if ind_type == "Absolute":
+    if ind_type != "coverage":
         return df.groupby(index).agg({indicator: "sum"})
 
     # Else get target population, merge it and calculate percentage
 
-    elif ind_type == 'Percentage':
+    elif ind_type == "coverage":
 
-        target = pop_tgt[pop_tgt.indicator == indicator]['cat'][0]
+        target = pop_tgt[pop_tgt.indicator == indicator]['cat'].values[0]
         val_col = df.columns[-1]
 
         columns = merge + [target]
