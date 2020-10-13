@@ -32,3 +32,4 @@ coc-dashboard/data/pop.csv
 coc-dashboard/data/target_pop.csv
 coc-dashboard/data/repo.csv
 coc-dashboard/data/db.sqlite
+coc-dashboard/data/repository_new.csv

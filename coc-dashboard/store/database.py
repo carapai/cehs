@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from model.database import Repository, FetchDate, Population, PopulationTarget
+from model.database import Repository, FetchDate, Population, PopulationTarget, District
 import pandas as pd
 
 
@@ -39,18 +39,20 @@ class Database(metaclass=SingletonMeta):
     dropdown_query = """SELECT * FROM dropdown_indicator;"""
 
     data_types = {
-        "district_name": str,
-        "facility_name": str,
+        # "district_name": str,
+        # "facility_name": str,
         "date": "datetime64[ns]",
-        "indicator_name": str,
-        "value_raw": float,
-        "value_iqr": float,
-        "value_std": float,
+        # "indicator_name": str,
+        # "value_raw": float,
+        # "value_iqr": float,
+        # "value_std": float,
+        # "value_rep": int
     }
 
     index_columns = ["id", "facility_name", "date", "year", "month"]
 
     datasets = {}
+    raw_data = {}
 
     init = False
 
@@ -58,10 +60,20 @@ class Database(metaclass=SingletonMeta):
         if bind_string:
             self.engine = create_engine(bind_string)
             self.Session = sessionmaker(bind=self.engine)
+
+            print("Fetching data")
+            repo_data = self.get_repository()  # VERY COSTLY, USE WITH CARE
+            print("Setting districts")
+            self.__districts = repo_data.id.unique().tolist()
+            self.__districts.sort()
+            print("Pivoting data")
+            for val_col in ["value_raw", "value_std", "value_iqr", "value_rep"]:
+                df = self.pivot_df(repo_data, val_col)
+                self.raw_data[val_col] = df
+
             self.init = True
+
         assert self.init, "You must pass a DB bind string to use Database first!"
-        self.__dataframe = pd.DataFrame()
-        self.__districts = []
         self.__indicator_dropdown = pd.DataFrame()
 
     def get_session(self):
@@ -72,89 +84,61 @@ class Database(metaclass=SingletonMeta):
         session = self.Session()
         return session
 
-    @property
-    def dataframe(self):
+    def get_repository(self):
 
-        if self.__dataframe.empty:
+        __dataframe = pd.read_sql(self.repo_view_query, con=self.engine)
 
-            self.__dataframe = pd.read_sql(self.repo_view_query, con=self.engine)
+        for col in __dataframe.columns:
+            if col in self.data_types.keys():
+                print(f"Convering {col}")
+                __dataframe[col] = __dataframe[col].astype(self.data_types.get(col))
 
-            for col in self.__dataframe.columns:
-                if col in self.data_types.keys():
-                    print(f"Convering {col}")
-                    self.__dataframe[col] = self.__dataframe[col].astype(
-                        self.data_types.get(col)
-                    )
+        year = []
+        month = []
+        months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+        ]
 
-            self.__dataframe["year"] = self.__dataframe.date.apply(lambda x: x.year)
-            months = [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ]
-            self.__dataframe["month"] = self.__dataframe.date.apply(
-                lambda x: months[x.month - 1]
-            )
+        for date in __dataframe.date:
+            year.append(date.year)
+            month.append(months[date.month - 1])
 
-            self.__dataframe.rename(columns={"district_name": "id"}, inplace=True)
+        __dataframe["year"] = year
 
-        return self.__dataframe
+        __dataframe["month"] = month
 
-    @property
-    def data_raw(self):
-        return self.dataframe[
-            self.index_columns + ["indicator_name", "value_raw"]
-        ].copy()
+        __dataframe.rename(columns={"district_name": "id"}, inplace=True)
 
-    @property
-    def data_iqr(self):
-        return self.dataframe[
-            self.index_columns + ["indicator_name", "value_iqr"]
-        ].copy()
+        return __dataframe
 
-    @property
-    def data_std(self):
-        return self.dataframe[
-            self.index_columns + ["indicator_name", "value_std"]
-        ].copy()
-
-    @property
-    def data_rep(self):
-        return self.dataframe[
-            self.index_columns + ["indicator_name", "value_rep"]
-        ].copy()
-
-    def pivot_single(self, df):
-        indicator_name = df.indicator_name[0]
-        df = df[self.index_columns + [df.columns[-1]]].rename(
-            columns={df.columns[-1]: indicator_name}
+    def pivot_df(self, df, value_column):
+        out = df.reset_index()
+        out = out[self.index_columns + ["indicator_name", value_column]]
+        out = pd.pivot_table(
+            out, index=self.index_columns, columns="indicator_name", aggfunc="first"
         )
-        # df = pd.pivot_table(
-        #     df, index=self.index_columns, columns="indicator_name", aggfunc="first"
-        # )
-        # df.columns = df.columns.droplevel(0)
-        # df = df.reset_index()
-        return df
+        out.columns = out.columns.droplevel(0)
+        out = out.reset_index()
+        return out
 
     @property
     def districts(self):
-        if len(self.__districts) < 1:
-            self.__districts = self.dataframe.id.unique().tolist()
         return self.__districts
 
     @property
     def indicator_dropdowns(self):
         if self.__indicator_dropdown.empty:
-
             self.__indicator_dropdown = pd.read_sql(self.dropdown_query, self.engine)
         return self.__indicator_dropdown
 
@@ -164,6 +148,16 @@ class Database(metaclass=SingletonMeta):
         date = session.query(FetchDate).one()
         session.close()
         return date.serialize()
+
+    def filter_by_indicator(self, df, indicator):
+        df = df.reset_index()
+        try:
+            df = df[self.index_columns + [indicator]]
+            # df = df.set_index(self.index_columns)
+        except Exception as e:
+            print(e)
+            print("No such column is present in the dataframe")
+        return df
 
     # !TODO basic error handling
     def include_dataset(self, key, df):
@@ -183,3 +177,12 @@ class Database(metaclass=SingletonMeta):
 
     def get_population_target(self):
         return self.get_serialized_into_df(PopulationTarget)
+
+    def filter_by_policy(self, policy):
+        dropdown_filters = {
+            "Correct outliers - using standard deviation": "value_std",
+            "Correct outliers - using interquartile range": "value_iqr",
+            "Keep outliers": "value_raw",
+            "Reporting": "value_rep",
+        }
+        return self.raw_data.get(dropdown_filters.get(policy)).copy()
