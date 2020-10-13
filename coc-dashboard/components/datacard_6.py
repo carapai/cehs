@@ -23,15 +23,16 @@ def map_reporting_dated_plot(data):
     reporting = []
     for district in last_date_df.id.unique():
         districtal_df = last_date_df[last_date_df.id == district]
-        total_facilities = (districtal_df[val_col] != "not_expected").sum()
+        total_facilities = (districtal_df[val_col] != 0).sum()
         reported_facilities = len(
-            districtal_df[districtal_df[val_col] == "positive_indic"]
+            districtal_df[districtal_df[val_col] == 3]
         )
         report_rate = round((reported_facilities / total_facilities) * 100, 2)
         districts.append(district)
         reporting.append(report_rate)
 
-    reporting_df = pd.DataFrame({"id": districts, "Reporting rate": reporting})
+    reporting_df = pd.DataFrame(
+        {"id": districts, f'reporting rate for {data_in.columns[-1]}': reporting})
     reporting_df = reporting_df.set_index("id")
 
     data_out = {
@@ -46,6 +47,7 @@ def map_reporting_dated_plot(data):
 reporting_map = MapDataCard(
     data=init_data_set,
     data_transform=map_reporting_dated_plot,
+    fig_title="Percentage change of indicator reporting rate between target and reference date",
     geodata=shapefile,
     locations="id",
     map_tolerance=0.005,
