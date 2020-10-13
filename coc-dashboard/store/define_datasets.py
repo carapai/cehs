@@ -13,7 +13,7 @@ from .cards_mutations import (
     bar_reporting_country_data,
     map_reporting_dated_data,
     scatter_reporting_district_data,
-    indicator_group,
+    # indicator_group,
 )
 
 # Define which function corresponds to which object

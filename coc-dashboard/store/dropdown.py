@@ -66,7 +66,7 @@ def initiate_dropdowns():
     )
 
     district_control_group = NestedDropdownGroup(
-        pd.DataFrame({"Please select a district": db.districts}),
+        pd.DataFrame({"Select a district": db.districts}),
         title="Select a district",
     )
 

@@ -93,7 +93,7 @@ class Repository(Base):
     value_raw = Column(Integer)
     value_iqr = Column(Integer)
     value_std = Column(Integer)
-    value_rep = Column(String)
+    value_rep = Column(Integer)
 
     indicator_info = relationship("Indicator")
     facility_info = relationship("Facility")

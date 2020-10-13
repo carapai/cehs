@@ -27,8 +27,6 @@ def scatter_country_data(*, outlier, indicator, indicator_group, **kwargs):
 
     df = db.filter_by_indicator(df, indicator)
 
-    df = db.pivot_single(df)
-
     # df_country = get_national_sum(df, indicator) (already done in get_perc)
 
     df_country = get_percentage(
@@ -64,8 +62,6 @@ def map_bar_country_dated_data(
     df = db.filter_by_policy(outlier)
 
     df = db.filter_by_indicator(df, indicator)
-
-    df = db.pivot_single(df)
 
     data_in = filter_df_by_dates(
         df, target_year, target_month, reference_year, reference_month
@@ -121,8 +117,6 @@ def scatter_district_data(*, outlier, indicator, indicator_group, district, **kw
 
     df = db.filter_by_indicator(df, indicator)
 
-    df = db.pivot_single(df)
-
     df_district = filter_by_district(df, district)
     df_district = get_district_sum(df_district, indicator)
     df_district = get_percentage(
@@ -158,8 +152,6 @@ def tree_map_district_dated_data(
 
     df = db.filter_by_indicator(df, indicator)
 
-    df = db.pivot_single(df)
-
     # TODO check how the date function works such that it shows only target date
 
     df_district_dated = filter_df_by_dates(
@@ -179,8 +171,6 @@ def scatter_facility_data(*, outlier, indicator, district, facility, **kwargs):
     df = db.filter_by_policy(outlier)
 
     df = db.filter_by_indicator(df, indicator)
-
-    df = db.pivot_single(df)
 
     df_facility = filter_by_district(df, district)
 
@@ -206,7 +196,7 @@ def bar_reporting_country_data(*, indicator, **kwargs):
 
     db = Database()
 
-    df = db.data_rep
+    df = db.raw_data.get("value_rep")
 
     df = db.filter_by_indicator(df, indicator)
 
@@ -229,11 +219,9 @@ def map_reporting_dated_data(
 
     db = Database()
 
-    df = db.data_rep
+    df = db.raw_data.get("value_rep")
 
     df = db.filter_by_indicator(df, indicator)
-
-    df = db.pivot_single(df)
 
     df = filter_df_by_dates(
         df, target_year, target_month, reference_year, reference_month
@@ -250,11 +238,9 @@ def scatter_reporting_district_data(*, indicator, district, **kwargs):
 
     db = Database()
 
-    df = db.data_rep
+    df = db.raw_data.get("value_rep")
 
     df = db.filter_by_indicator(df, indicator)
-
-    df = db.pivot_single(df)
 
     df_reporting_district = filter_by_district(df, district)
 
@@ -270,8 +256,6 @@ def indicator_group(*, indicator_group, outlier, **kwargs):
     db = Database()
 
     df = db.filter_by_policy(outlier)
-
-    df = db.pivot_single(df)
 
     # !FIXME when mutations and store are decoupled! !IMPORTANT
 
