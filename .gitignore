@@ -3,8 +3,6 @@
 .ipynb_checkpoints
 .env
 .vscode
-coc-dashboard/data/columns.csv
-coc-dashboard/data/groups.csv
 coc-dashboard/data/iqr.csv
 coc-dashboard/data/outliers.csv
 coc-dashboard/data/reporting.csv
@@ -29,4 +27,3 @@ coc-dashboard/data/old_data/outlier_data.csv
 coc-dashboard/data/old_data/report_data.csv
 coc-dashboard/data/old_data/std_no_outlier_data.csv
 coc-dashboard/data/pop.csv
-coc-dashboard/data/target_pop.csv

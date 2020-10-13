@@ -14,7 +14,7 @@ load_dotenv(find_dotenv())
 DEFAULTS = {
     "default_outlier": os.environ["OUTLIER"],
     "default_indicator": os.environ["INDICATOR"],
-    "default_indicator_type": os.environ["INDICATOR_TYPE"],
+    "default_indicator_group": os.environ["INDICATOR_GROUP"],
     "default_district": os.environ["DISTRICT"],
     "default_target_year": os.environ["TARGET_YEAR"],
     "default_target_month": os.environ["TARGET_MONTH"],
@@ -61,7 +61,8 @@ def initiate_dropdowns(data_outliers, indicator_group):
     )
 
     district_control_group = NestedDropdownGroup(
-        data_outliers[["id"]].rename(columns={"id": "Please select a district"}),
+        data_outliers[["id"]].rename(
+            columns={"id": "Please select a district"}),
         title="Select a district",
     )
 
@@ -108,7 +109,8 @@ def set_dropdown_defaults(
     )
 
     target_date.dropdown_objects[0].value = DEFAULTS.get("default_target_year")
-    target_date.dropdown_objects[1].value = DEFAULTS.get("default_target_month")
+    target_date.dropdown_objects[1].value = DEFAULTS.get(
+        "default_target_month")
 
     indicator_dropdown_group.dropdown_objects[0].value = DEFAULTS.get(
         "default_indicator_type"
@@ -119,7 +121,10 @@ def set_dropdown_defaults(
         "default_indicator"
     )
 
-    reference_date.dropdown_objects[0].value = DEFAULTS.get("default_reference_year")
-    reference_date.dropdown_objects[1].value = DEFAULTS.get("default_reference_month")
+    reference_date.dropdown_objects[0].value = DEFAULTS.get(
+        "default_reference_year")
+    reference_date.dropdown_objects[1].value = DEFAULTS.get(
+        "default_reference_month")
 
-    district_control_group.dropdown_objects[0].value = DEFAULTS.get("default_district")
+    district_control_group.dropdown_objects[0].value = DEFAULTS.get(
+        "default_district")

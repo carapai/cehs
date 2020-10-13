@@ -1,0 +1,71 @@
+old,new
+districtname,id
+date,date
+year,year
+month,month
+orgUnit,facility_id
+type,type
+1st_anc_visits,1st ANC Visits
+4th_anc_visits,4th ANC Visits
+maternity_admissions,Maternity Admissions
+births,Deliveries in unit
+births_live,Deliveries in unit - live
+births_fresh_stillbirth,Deliveries in unit - fresh stillbirth
+births_macerated_stillbirth,Deliveries in unit - macerated stillbirth
+newborn_deaths,Newborn deaths
+postnatal_visits,Postnatal Visits
+bcg__u1_all,BCG (all)
+bcg__u1_outreach,BCG (outreach)
+bcg__u1_static,BCG (static)
+dpt1__u1_all,DPT1 (all)
+dpt1__u1_outreach,DPT1 (outreach)
+dpt1__u1_static,DPT1 (static)
+dpt3__u1_all,DPT3 (all)
+dpt3__u1_outreach,DPT3 (outreach)
+dpt3__u1_static,DPT3 (static)
+hpv1__school,HPV1 (school)
+hpv1__all-hpv,HPV1 (all)
+hpv1__community,HPV1 (community)
+hpv2__school,HPV2 (school)
+hpv2__all-hpv,HPV2 (all)
+hpv2__community,HPV2 (community)
+mr1__u1_all,MR1 (all)
+mr1__u1_outreach,MR1 (outreach)
+mr1__u1_static,MR1 (static)
+pcv1__u1_all,PCV1 (all)
+pcv1__u1_outreach,PCV1 (outreach)
+pcv1__u1_static,PCV1 (static)
+pcv3__u1_all,PCV3 (all)
+pcv3__u1_outreach,PCV3 (outreach)
+pcv3__u1_static,PCV3 (static)
+td1__nonpregnant,TD1 (nonpregnant)
+td1__pregnant,TD1 (pregnant)
+td2__nonpregnant,TD2 (nonpregnant)
+td2__pregnant,TD2 (pregnant)
+td3__nonpregnant,TD3 (nonpregnant)
+td3__pregnant,TD3 (pregnant)
+td4_5__nonpregnant,TD4-5 (nonpregnant)
+td4_5__pregnant,TD4-5 (pregnant)
+malaria_cases,Malaria cases
+opd_attendance,OPD attendance
+malaria_cases_treated,Malaria cases treated
+malaria_tests,Malaria tests
+mat_tested_hiv_positive,Mat tested HIV positive
+mat_tested_hiv,Mat tested HIV
+malaria_deaths,Malaria deaths
+anc_tested_hiv,ANC tested HIV
+anc_tested_hiv_positive,ANC tested HIV positive
+anc_initiated_hiv,ANC initiated on ART
+tested_hiv,Tested HIV
+tested_hiv_positive,Tested HIV positive
+hiv_positive_linked,HIV positive linked to care
+mat_initiated_hiv,Mat initiated on ART
+pnc_tested_hiv,PNC tested HIV
+pnc_tested_hiv_positive,PNC tested HIV positive
+ipd_attendance,IPD attendance
+tb_cases_registered,TB cases registered
+vitamin_a,Number of doses of vitamin A distributed
+sam_identified,Number of SAM admissions
+mam_identified,Number of MAM admissions
+low_weight_births,Low weight births
+pnc_initiated_hiv,PNC initiated on ART
