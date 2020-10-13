@@ -21,39 +21,26 @@ from .cards_mutations import (
 
 #args = ip.getfullargspec(scatter_country_data)[0]
 
-FUNC_LIST = [
-    scatter_country_data,
-    map_bar_country_dated_data,
-    scatter_district_data,
-    tree_map_district_dated_data,
-    scatter_facility_data,
-    bar_reporting_country_data,
-    map_reporting_dated_data,
-    scatter_reporting_district_data,
-    indicator_group,
-]
+FUNC_DICT = {
+    "country": scatter_country_data,
+    "dated": map_bar_country_dated_data,
+    "district": scatter_district_data,
+    "district_dated": tree_map_district_dated_data,
+    "facility": scatter_facility_data,
+    "reporting_country": bar_reporting_country_data,
+    "reporting_dated": map_reporting_dated_data,
+    "reporting_district": scatter_reporting_district_data,
+    "indicator_group": indicator_group}
 
-FUNC_ARG_DICT = {}
+FUNC_DF = pd.DataFrame.from_dict(
+    FUNC_DICT, orient='index').rename(columns={0: "function"})
 
-for f in FUNC_LIST:
+FUNC_DF['args'] = None
+
+for i in FUNC_DF.index:
+    f = FUNC_DF.loc[i, 'function']
     args = ip.getfullargspec(f)[4]
-    FUNC_ARG_DICT[f] = args
-
-
-FUNC_DF = pd.DataFrame.from_dict(FUNC_ARG_DICT, orient="index").reset_index()
-FUNC_DF.index = [
-    "country",
-    "dated",
-    "district",
-    "district_dated",
-    "facility",
-    "reporting_country",
-    "reporting_dated",
-    "reporting_district",
-    "indicator_group",
-]
-
-FUNC_DF.rename(columns={"index": "function"}, inplace=True)
+    FUNC_DF.loc[i, 'args'] = args
 
 
 @timeit
@@ -72,7 +59,7 @@ def define_datasets(static, dfs, controls, last_controls={}, datasets={}):
         changed_keys = set(changed.index)
 
         for i in FUNC_DF.index:
-            args = set(FUNC_DF.loc[i, range(0, 7)].unique())
+            args = set(FUNC_DF.loc[i, 'args'])
             if len(args.intersection(changed_keys)) > 0:
                 datasets[i] = FUNC_DF.loc[i, "function"](
                     dfs, static, **controls)
