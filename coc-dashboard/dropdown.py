@@ -55,7 +55,9 @@ def initiate_dropdowns(data_outliers, indicator_group):
     )
 
     indicator_dropdown_group = NestedDropdownGroup(
-        indicator_group, title="Select an indicator"
+        indicator_group[['Choose an indicator group',
+                         'Choose an indicator']],
+        title="Select an indicator"
     )
 
     # TODO Have those defined as this month - 1

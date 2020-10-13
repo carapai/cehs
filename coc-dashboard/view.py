@@ -15,7 +15,7 @@ from store import (
     data_outliers,
     define_datasets,
     download_file,
-    indicator_group,
+    indicator_groups,
     month_order,
     side_nav,
     static,

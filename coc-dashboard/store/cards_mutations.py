@@ -10,6 +10,7 @@ from store import (
     month_order,
     index_base_columns,
     timeit,
+    get_new_indic_name,
 )
 
 import pandas as pd
@@ -24,8 +25,6 @@ def scatter_country_data(dfs, static, *, outlier, indicator, indicator_group, **
     df = filter_df_by_indicator(
         df, indicator, persist_columns=index_base_columns)
 
-    # df_country = get_national_sum(df, indicator) (already done in get_perc)
-
     df_country = get_percentage(
         df,
         static.get("population data"),
@@ -34,6 +33,12 @@ def scatter_country_data(dfs, static, *, outlier, indicator, indicator_group, **
         indicator,
         all_country=True,
     )
+
+    df_country.rename(
+        columns={indicator: get_new_indic_name(static.get("indicator_groups"),
+                                               indicator,
+                                               indicator_group)},
+        inplace=True)
 
     return df_country
 
@@ -100,6 +105,12 @@ def map_bar_country_dated_data(
     data_in = data_in.set_index("id")
     data_out = data_in[~pd.isna(data_in[indicator])]
 
+    data_out.rename(
+        columns={indicator: get_new_indic_name(static.get("indicator_groups"),
+                                               indicator,
+                                               indicator_group)},
+        inplace=True)
+
     return data_out
 
 
@@ -123,6 +134,11 @@ def scatter_district_data(
         indicator_group,
         indicator,
     )
+    df_district.rename(
+        columns={indicator: get_new_indic_name(static.get("indicator_groups"),
+                                               indicator,
+                                               indicator_group)},
+        inplace=True)
 
     return df_district
 
@@ -157,6 +173,11 @@ def tree_map_district_dated_data(
 
     df_district_dated = filter_by_district(df_district_dated, district)
 
+    df_district_dated.rename(
+        columns={indicator: get_new_indic_name(static.get("indicator_groups"),
+                                               indicator)},
+        inplace=True)
+
     return df_district_dated
 
 
@@ -182,6 +203,11 @@ def scatter_facility_data(
             df_facility.facility_name == df_facility.facility_name[0]
         ].reset_index(drop=True)
 
+    df_facility.rename(
+        columns={indicator: get_new_indic_name(static.get("indicator_groups"),
+                                               indicator)},
+        inplace=True)
+
     return df_facility
 
 
@@ -195,6 +221,11 @@ def bar_reporting_country_data(dfs, static, *, indicator, **kwargs):
     df_reporting = filter_df_by_indicator(
         df_reporting, indicator, persist_columns=index_base_columns
     )
+
+    df_reporting.rename(
+        columns={indicator: get_new_indic_name(static.get("indicator_groups"),
+                                               indicator)},
+        inplace=True)
 
     return df_reporting
 
@@ -224,6 +255,11 @@ def map_reporting_dated_data(
         df_reporting, target_year, target_month, reference_year, reference_month
     )
 
+    df_reporting_dated.rename(
+        columns={indicator: get_new_indic_name(static.get("indicator_groups"),
+                                               indicator)},
+        inplace=True)
+
     return df_reporting_dated
 
 
@@ -239,6 +275,11 @@ def scatter_reporting_district_data(dfs, static, *, indicator, district, **kwarg
     )
 
     df_reporting_district = filter_by_district(df_reporting, district)
+
+    df_reporting_district.rename(
+        columns={indicator: get_new_indic_name(static.get("indicator_groups"),
+                                               indicator)},
+        inplace=True)
 
     return df_reporting_district
 

@@ -14,7 +14,7 @@ from dropdown import initiate_dropdowns, set_dropdown_defaults
 DATABASE_URI = os.environ["HEROKU_POSTGRESQL_CYAN_URL"]
 engine = create_engine(DATABASE_URI)
 
-columns, data_reporting, data_outliers, data_std, data_iqr, indicator_group = read_data(
+columns, data_reporting, data_outliers, data_std, data_iqr, indicator_groups = read_data(
     engine, test=True
 )
 
@@ -29,6 +29,8 @@ for key, df in dfs.items():
     df["date"] = pd.to_datetime(df.date, errors="coerce")
     dfs[key] = df
 
+static["indicator_groups"] = indicator_groups
+
 # NAVIGATION
 
 (
@@ -38,7 +40,7 @@ for key, df in dfs.items():
     reference_date,
     target_date,
     district_control_group,
-) = initiate_dropdowns(data_outliers, indicator_group)
+) = initiate_dropdowns(data_outliers, indicator_groups)
 
 set_dropdown_defaults(
     outlier_policy_dropdown_group,

@@ -23,7 +23,7 @@ def scatter_country_plot(df):
 
 country_overview_scatter = ChartDataCard(
     title="Overview: Across the country, the number of $label$ changed by between 04-2019 and 04-2020",
-    fig_title="Total number of $label$ across the country",
+    fig_title="Total $label$ across the country",
     data=init_data_set,
     data_transform=scatter_country_plot,
     fig_type="Scatter",
