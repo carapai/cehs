@@ -108,7 +108,8 @@ download_button = Datadownload()
 
 meth_date = date_df["Date"].iloc[-1]
 
-methodology_layout = MethodologySection(title="Methodology", data=meth_data(meth_date))
+methodology_layout = MethodologySection(
+    title="Methodology", data=meth_data(meth_date))
 methodology = Methodology([methodology_layout])
 
 
@@ -183,7 +184,7 @@ bar_chart_ranks_bottom = ChartDataCard(
 )
 
 country_overview = CardLayout(
-    title="Percentage change in number of children under one receiving their $label$ between target and reference date",
+    title="Percentage change in $label$ between target and reference date",
     elements=[country_overview_map, bar_chart_ranks_bottom],
 )
 
@@ -389,7 +390,8 @@ def update_on_click(*inputs):
         )
 
         facility_scatter.data = init_data_set
-        facility_scatter.figure = facility_scatter._get_figure(facility_scatter.data)
+        facility_scatter.figure = facility_scatter._get_figure(
+            facility_scatter.data)
         facility_scatter.figure_title = (
             f"Evolution of $label$ in {label} (click on the graph above to filter)"
         )
@@ -402,7 +404,8 @@ def update_on_click(*inputs):
 
 @app.callback(
     [Output("ds-paginator", "children"), Output("paginator", "children")],
-    [Input("dashboard-button", "n_clicks"), Input("reporting-button", "n_clicks")],
+    [Input("dashboard-button", "n_clicks"),
+     Input("reporting-button", "n_clicks")],
 )
 def change_page(*inputs):
     changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
@@ -452,7 +455,8 @@ def change_titles(*inputs):
         data_reference = data.get(reference_year)
         data_target = data.get(target_year)
         perc_first = round(
-            (data_target.loc[target_month][0] / data_reference.loc[reference_month][0])
+            (data_target.loc[target_month][0] /
+             data_reference.loc[reference_month][0])
             * 100
         )
     except Exception:
@@ -482,7 +486,8 @@ def change_titles(*inputs):
     try:
         data_reporting = stacked_bar_reporting_country.data
 
-        date_reporting = datetime(target_year, month_order.index(target_month) + 1, 1)
+        date_reporting = datetime(
+            target_year, month_order.index(target_month) + 1, 1)
 
         try:
             reported_positive = data_reporting.get("Reported a positive number").loc[
