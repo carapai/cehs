@@ -36,14 +36,14 @@ def scatter_country_data(*, outlier, indicator, indicator_group, **kwargs):
         all_country=True,
     )
 
-    df_country.rename(
-        columns={
-            indicator: get_new_indic_name(
-                static.get("indicator_groups"), indicator, indicator_group
-            )
-        },
-        inplace=True,
-    )
+    # df_country.rename(
+    #     columns={
+    #         indicator: get_new_indic_name(
+    #             static.get("indicator_groups"), indicator, indicator_group
+    #         )
+    #     },
+    #     inplace=True,
+    # )
 
     return df_country
 
@@ -86,15 +86,17 @@ def map_bar_country_dated_data(
 
     # TODO updat teh filter by data function so that this step is no longer needed
 
-    mask = (
-        (data_in.year == int(reference_year)) & (data_in.month == reference_month)
-    ) | ((data_in.year == int(target_year)) & (data_in.month == target_month))
+    min_date = data_in.date.min()
+    max_date = data_in.date.max()
+
+    mask = (data_in.date == min_date) | (data_in.date == max_date)
 
     data_in = data_in[mask]
 
-    data_in = data_in.groupby(by=["id", "year", "month"], as_index=False).agg(
-        {indicator: "sum"}
-    )
+    data_in = data_in.groupby(by=["id", "date"], as_index=False).agg({indicator: "sum"})
+
+    data_in["year"] = data_in.date.apply(lambda x: x.year)
+
     data_in = data_in.pivot_table(columns="year", values=indicator, index="id")
 
     data_in[indicator] = (
@@ -109,14 +111,14 @@ def map_bar_country_dated_data(
     data_in = data_in.set_index("id")
     data_out = data_in[~pd.isna(data_in[indicator])]
 
-    data_out.rename(
-        columns={
-            indicator: get_new_indic_name(
-                static.get("indicator_groups"), indicator, indicator_group
-            )
-        },
-        inplace=True,
-    )
+    # data_out.rename(
+    #     columns={
+    #         indicator: get_new_indic_name(
+    #             static.get("indicator_groups"), indicator, indicator_group
+    #         )
+    #     },
+    #     inplace=True,
+    # )
 
     return data_out
 
@@ -142,14 +144,15 @@ def scatter_district_data(*, outlier, indicator, indicator_group, district, **kw
         indicator_group,
         indicator,
     )
-    df_district.rename(
-        columns={
-            indicator: get_new_indic_name(
-                static.get("indicator_groups"), indicator, indicator_group
-            )
-        },
-        inplace=True,
-    )
+
+    # df_district.rename(
+    #     columns={
+    #         indicator: get_new_indic_name(
+    #             static.get("indicator_groups"), indicator, indicator_group
+    #         )
+    #     },
+    #     inplace=True,
+    # )
 
     return df_district
 
@@ -184,12 +187,12 @@ def tree_map_district_dated_data(
 
     df_district_dated = filter_by_district(df_district_dated, district)
 
-    df_district_dated.rename(
-        columns={
-            indicator: get_new_indic_name(static.get("indicator_groups"), indicator)
-        },
-        inplace=True,
-    )
+    # df_district_dated.rename(
+    #     columns={
+    #         indicator: get_new_indic_name(static.get("indicator_groups"), indicator)
+    #     },
+    #     inplace=True,
+    # )
 
     return df_district_dated
 
@@ -203,27 +206,23 @@ def scatter_facility_data(*, outlier, indicator, district, facility, **kwargs):
 
     df = db.filter_by_indicator(df, indicator)
 
-    df_facility = filter_by_district(df, district)
+    df = filter_by_district(df, district)
 
     # TODO Reorder such that its the one facility with the on selected data max value that shows
 
-    if facility:
-        df_facility = df_facility[df_facility.facility_name == facility].reset_index(
-            drop=True
-        )
-    else:
-        df_facility = df_facility[
-            df_facility.facility_name == df_facility.facility_name[0]
-        ].reset_index(drop=True)
+    if not facility:
+        facility = df.facility_name[0]
 
-    df_facility.rename(
-        columns={
-            indicator: get_new_indic_name(static.get("indicator_groups"), indicator)
-        },
-        inplace=True,
-    )
+    df = df[df.facility_name == facility].reset_index(drop=True)
 
-    return df_facility
+    # df_facility.rename(
+    #     columns={
+    #         indicator: get_new_indic_name(static.get("indicator_groups"), indicator)
+    #     },
+    #     inplace=True,
+    # )
+
+    return df
 
 
 # CARD 5
@@ -238,14 +237,14 @@ def bar_reporting_country_data(*, indicator, **kwargs):
 
     df = db.filter_by_indicator(df, indicator)
 
-    df_reporting.rename(
-        columns={
-            indicator: get_new_indic_name(static.get("indicator_groups"), indicator)
-        },
-        inplace=True,
-    )
+    # df.rename(
+    #     columns={
+    #         indicator: get_new_indic_name(static.get("indicator_groups"), indicator)
+    #     },
+    #     inplace=True,
+    # )
 
-    return df_reporting
+    return df
 
 
 # CARD 6
@@ -272,12 +271,12 @@ def map_reporting_dated_data(
         df, target_year, target_month, reference_year, reference_month
     )
 
-    df.rename(
-        columns={
-            indicator: get_new_indic_name(static.get("indicator_groups"), indicator)
-        },
-        inplace=True,
-    )
+    # df.rename(
+    #     columns={
+    #         indicator: get_new_indic_name(static.get("indicator_groups"), indicator)
+    #     },
+    #     inplace=True,
+    # )
 
     return df
 
@@ -296,12 +295,12 @@ def scatter_reporting_district_data(*, indicator, district, **kwargs):
 
     df_reporting_district = filter_by_district(df, district)
 
-    df_reporting_district.rename(
-        columns={
-            indicator: get_new_indic_name(static.get("indicator_groups"), indicator)
-        },
-        inplace=True,
-    )
+    # df_reporting_district.rename(
+    #     columns={
+    #         indicator: get_new_indic_name(static.get("indicator_groups"), indicator)
+    #     },
+    #     inplace=True,
+    # )
 
     return df_reporting_district
 

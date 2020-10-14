@@ -130,11 +130,11 @@ def get_percentage(df, pop, pop_tgt, indicator_group, indicator, all_country=Fal
 
     # Pick what to grouby and index on : either district level or national level
     merge = ["id", "year"]
-    index = ["id", "year", "month", "date"]
+    index = ["id", "date"]
 
     if all_country == True:
         merge = merge[1:]
-        index = index[1:4]
+        index = index[1:]
 
     ind_type = indicator_group.split("(")[-1][:-1]
 
@@ -207,26 +207,29 @@ def timeit(f):
 
     return timed
 
+
 # Formattimg method
 
 
 def get_perc_description(perc):
     perc_abs = abs(perc)
     if perc >= 0.1:
-        descrip = f'increased by {perc_abs}%'
+        descrip = f"increased by {perc_abs}%"
     elif perc_abs < 0.1:
-        descrip = 'remained stable'
+        descrip = "remained stable"
     elif perc <= 0.1:
-        descrip = f'decreased by {perc_abs}%'
+        descrip = f"decreased by {perc_abs}%"
     return descrip
 
 
 def get_new_indic_name(indicator_group, indicator, indicator_group_select=None):
     if indicator_group_select:
         indicator_view_name = indicator_group[
-            (indicator_group['Choose an indicator'] == indicator) &
-            (indicator_group['Choose an indicator group'] == indicator_group_select)]['View'].values[0]
+            (indicator_group["Choose an indicator"] == indicator)
+            & (indicator_group["Choose an indicator group"] == indicator_group_select)
+        ]["View"].values[0]
     else:
         indicator_view_name = indicator_group[
-            indicator_group['Choose an indicator'] == indicator]['View'].values[0]
+            indicator_group["Choose an indicator"] == indicator
+        ]["View"].values[0]
     return indicator_view_name

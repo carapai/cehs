@@ -16,7 +16,7 @@ db = Database(DATABASE_URI)
 from .static_info import *
 from .geopopulation import shapefile, static
 
-static["indicator_groups"] = indicator_groups
+# static["indicator_groups"] = indicator_groups
 
 # NAVIGATION
 

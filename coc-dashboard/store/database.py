@@ -35,7 +35,7 @@ class Database(metaclass=SingletonMeta):
     Return: Database
     """
 
-    repo_view_query = """SELECT * FROM dataset;"""
+    repo_view_query = """SELECT district_name, facility_name, date, indicator_name, value_raw, value_rep FROM dataset;"""
     dropdown_query = """SELECT * FROM dropdown_indicator;"""
 
     data_types = {
@@ -49,7 +49,7 @@ class Database(metaclass=SingletonMeta):
         # "value_rep": int
     }
 
-    index_columns = ["id", "facility_name", "date", "year", "month"]
+    index_columns = ["id", "facility_name", "date"]
 
     datasets = {}
     raw_data = {}
@@ -67,7 +67,7 @@ class Database(metaclass=SingletonMeta):
             self.__districts = repo_data.id.unique().tolist()
             self.__districts.sort()
             print("Pivoting data")
-            for val_col in ["value_raw", "value_std", "value_iqr", "value_rep"]:
+            for val_col in ["value_raw", "value_rep"]:
                 df = self.pivot_df(repo_data, val_col)
                 self.raw_data[val_col] = df
 
@@ -92,31 +92,6 @@ class Database(metaclass=SingletonMeta):
             if col in self.data_types.keys():
                 print(f"Convering {col}")
                 __dataframe[col] = __dataframe[col].astype(self.data_types.get(col))
-
-        year = []
-        month = []
-        months = [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-        ]
-
-        for date in __dataframe.date:
-            year.append(date.year)
-            month.append(months[date.month - 1])
-
-        __dataframe["year"] = year
-
-        __dataframe["month"] = month
 
         __dataframe.rename(columns={"district_name": "id"}, inplace=True)
 
@@ -180,8 +155,8 @@ class Database(metaclass=SingletonMeta):
 
     def filter_by_policy(self, policy):
         dropdown_filters = {
-            "Correct outliers - using standard deviation": "value_std",
-            "Correct outliers - using interquartile range": "value_iqr",
+            "Correct outliers - using standard deviation": "value_raw",
+            "Correct outliers - using interquartile range": "value_raw",
             "Keep outliers": "value_raw",
             "Reporting": "value_rep",
         }
